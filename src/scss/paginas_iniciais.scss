@@ -1,17 +1,19 @@
+@import 'variaveis';
+
 //Index
 
 //Hero Section
 .hero {
 
     .btn-primary {
-        background-color: rgb(0, 170, 14);
+        background-color: $green;
         padding: 10px;
         border-radius: 20px;
-        color: #fff;
+        color: $white;
         transition: .3s ease;
 
         &:hover {
-            background-color: rgb(18, 78, 0);
+            background-color: $green_hover;
         }
     }
 
@@ -19,7 +21,7 @@
         background-color: rgb(116, 116, 116);
         padding: 10px;
         border-radius: 10px;
-        color: #fff;
+        color: $white;
         transition: .3s ease;
 
         &:hover {
@@ -36,7 +38,7 @@
     background-color: rgb(190, 255, 190);
 
     .benefit-item {
-        background-color: #fff;
+        background-color: $white;
         border-radius: 10px;
         padding: 10px;
     }

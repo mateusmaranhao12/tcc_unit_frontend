@@ -1,0 +1,36 @@
+@import 'variaveis';
+
+.input-field {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.btn-toggle {
+    padding: 10px 20px;
+    border: 2px solid $green_hover;
+    background-color: $white;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &.active,
+    &:hover {
+        background-color: $green;
+        color: $white;
+    }
+}
+
+.btn-submit {
+    background-color: $green;
+    color: $white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $green_hover;
+    }
+}
