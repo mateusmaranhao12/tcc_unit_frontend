@@ -1,4 +1,7 @@
 .nav-index {
+
+    padding: 30px;
+
     .text-gray-700 {
         position: relative;
         transition: color 0.3s ease;
@@ -11,12 +14,12 @@
             bottom: -5px;
             width: 0;
             height: 2px;
-            background-color: darkred;
+            background-color: darkblue;
             transition: width 0.3s ease, left 0.3s ease;
         }
 
         &:hover {
-            color: darkred;
+            color: darkblue;
 
             &::after {
                 width: 100%;
@@ -26,7 +29,7 @@
     }
 
     .active {
-        color: darkred;
+        color: darkblue;
         cursor: text;
 
         &::after {
