@@ -2,7 +2,7 @@
   <NavbarIndex />
   <div class="index-container">
     <!-- Hero Section -->
-    <section class="hero bg-blue-50 py-16 text-center">
+    <section class="hero bg-green-50 py-16 text-center">
       <div class="container mx-auto px-4">
         <h1 class="text-4xl font-bold text-gray-800">
           Agende suas Consultas com Facilidade!
@@ -36,7 +36,7 @@
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
           <div v-for="(benefit, index) in benefits" :key="index" class="benefit-item">
-            <h3 class="text-xl font-semibold text-blue-600">
+            <h3 class="text-xl font-semibold text-green-600">
               <i class="fa-solid fa-check"></i> {{ benefit.title }}
             </h3>
             <p class="text-gray-600">{{ benefit.description }}</p>

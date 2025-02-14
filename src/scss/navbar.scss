@@ -14,12 +14,12 @@
             bottom: -5px;
             width: 0;
             height: 2px;
-            background-color: darkblue;
+            background-color: darkgreen;
             transition: width 0.3s ease, left 0.3s ease;
         }
 
         &:hover {
-            color: darkblue;
+            color: darkgreen;
 
             &::after {
                 width: 100%;
@@ -29,7 +29,7 @@
     }
 
     .active {
-        color: darkblue;
+        color: darkgreen;
         cursor: text;
 
         &::after {

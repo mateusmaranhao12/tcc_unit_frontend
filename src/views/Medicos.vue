@@ -32,7 +32,7 @@ export default class Medicos extends Vue {
     { nome: 'Dra. Yali Maria', especialidade: 'Dermatologista', imagem: 'user2' },
     { nome: 'Dr. Enzo Levy', especialidade: 'Ortopedista', imagem: 'user7' },
     { nome: 'Dr. Felipe Siqueira', especialidade: 'Hematologista', imagem: 'user8' },
-    { nome: 'Dra. George Soares', especialidade: 'Nefrologista', imagem: 'user5' },
+    { nome: 'Dr. George Soares', especialidade: 'Nefrologista', imagem: 'user5' },
     { nome: 'Dr. Ian Zambanini', especialidade: 'Pneumologista', imagem: 'user4' }
   ];
 }
