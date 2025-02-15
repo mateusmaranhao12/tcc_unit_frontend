@@ -3,7 +3,7 @@
     <div class="container mx-auto flex justify-between items-center py-4">
       <!-- Logo -->
       <div class="flex items-center flex-1">
-        <span class="text-2xl font-bold text-green-600">Saude+</span>
+        <span class="text-2xl font-bold text-green-600">App Saude+</span>
       </div>
 
       <!-- Navigation Links Centralizados -->

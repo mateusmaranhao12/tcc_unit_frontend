@@ -1,6 +1,6 @@
 <template>
     <NavbarIndex />
-    <div class="container mx-auto py-8">
+    <div class="card-form container mx-auto mt-8 mb-8">
         <h1 class="text-3xl font-bold text-center">Cadastro</h1>
 
         <!-- Botões para selecionar tipo de usuário -->

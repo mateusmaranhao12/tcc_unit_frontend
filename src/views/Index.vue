@@ -13,7 +13,7 @@
 
         <!-- Botões de Ação -->
         <div class="mt-6 space-x-4">
-          <router-link to="/agendar" class="btn-primary">
+          <router-link to="/cadastro" class="btn-primary">
             Agendar Consulta
           </router-link>
           <router-link to="/cadastro" class="btn-secondary">
