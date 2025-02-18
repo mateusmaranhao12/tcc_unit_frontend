@@ -138,7 +138,7 @@
 
         <!-- Histórico Médico -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Histórico Médico <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Histórico Médico</label>
             <div class="relative flex items-start w-full">
                 <textarea v-model="paciente.historico" placeholder="Histórico Médico"
                     class="input-field rounded-l-none border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none w-full h-28 resize-none"></textarea>
@@ -147,7 +147,7 @@
 
         <!-- Foto de Perfil -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil</label>
             <div class="flex items-center space-x-4">
                 <!-- Círculo para a Pré-visualização da Imagem -->
                 <div v-if="paciente.imagem" class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">

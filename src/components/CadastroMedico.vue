@@ -15,7 +15,8 @@
 
         <!-- Sobrenome -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Sobrenome <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sobrenome <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-user text-xl"></i>
@@ -27,7 +28,8 @@
 
         <!-- Email -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-envelope text-xl"></i>
@@ -39,7 +41,8 @@
 
         <!-- Senha -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <!-- Ícone do Cadeado -->
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
@@ -60,7 +63,8 @@
 
         <!-- Genero -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Gênero <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Gênero <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-venus-mars text-xl"></i>
@@ -89,7 +93,8 @@
 
         <!-- Especialidade -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Especialidade <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Especialidade <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-user-md text-xl"></i>
@@ -104,7 +109,8 @@
 
         <!--Telefone-->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-phone text-xl"></i>
@@ -116,7 +122,8 @@
 
         <!-- Data de Nascimento -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
@@ -140,7 +147,8 @@
 
         <!-- Endereço -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Endereço <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Endereço <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-map-marker-alt text-xl"></i>
@@ -150,27 +158,28 @@
             </div>
         </div>
 
-        <!-- Horário de Atendimento -->
-        <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Horário de Atendimento <span class="text-red-800">*</span></label>
-            <div class="relative flex items-center h-10 w-full">
-                <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
-                    <i class="fa-solid fa-clock text-xl"></i>
-                </div>
-                <select v-model="medico.horario"
-                    class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
-                    <option value="">Selecione um horário</option>
-                    <option v-for="horario in horariosAtendimento" :key="horario" :value="horario">
-                        {{ horario }}
-                    </option>
-                </select>
+        <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Horários de Atendimento <span
+                    class="text-red-800">*</span></label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <label v-for="horario in horariosAtendimento" :key="horario" class="flex items-center cursor-pointer">
+                    <!-- Checkbox -->
+                    <input type="checkbox" :value="horario" v-model="medico.horarios" class="hidden peer">
+                    <!-- Ícone do checkbox customizado -->
+                    <div
+                        class="w-5 h-5 border-2 border-gray-400 rounded-md peer-checked:bg-green-600 peer-checked:border-green-600 flex items-center justify-center transition">
+                        <i class="fa-solid fa-check text-white text-xs" v-if="medico.horarios.includes(horario)"></i>
+                    </div>
+                    <!-- Texto que pode ser clicado -->
+                    <span class="ml-2 text-gray-700">{{ horario }}</span>
+                </label>
             </div>
         </div>
 
-
         <!-- Valor da Consulta -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Valor da Consulta <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor da Consulta <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-brazilian-real-sign text-xl"></i>
@@ -183,7 +192,8 @@
 
         <!-- Foto de Perfil -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil <span
+                    class="text-red-800">*</span></label>
             <div class="flex items-center space-x-4">
                 <!-- Círculo para a Pré-visualização da Imagem -->
                 <div v-if="medico.imagem" class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">
@@ -228,7 +238,7 @@ export default class CadastroMedico extends Vue {
         telefone: '',
         cpf: '',
         endereco: '',
-        horario: '',
+        horarios: [] as string[],
         valorConsulta: '',
         imagem: ''
     }
@@ -240,8 +250,9 @@ export default class CadastroMedico extends Vue {
     ]
 
     horariosAtendimento = [
-        '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-        '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+        '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00', '10:00 - 11:00',
+        '11:00 - 12:00', '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00',
+        '16:00 - 17:00', '17:00 - 18:00'
     ]
 
     submitForm() {
