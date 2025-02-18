@@ -1,6 +1,5 @@
 <template>
-    <form @submit.prevent="submitForm"
-        class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <form @submit.prevent="submitForm" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
         <!-- Nome -->
         <div class="col-span-2 md:col-span-1">
@@ -149,10 +148,16 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-clock text-xl"></i>
                 </div>
-                <input type="text" v-model="medico.horario" placeholder="Horário de Atendimento"
+                <select v-model="medico.horario"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
+                    <option value="">Selecione um horário</option>
+                    <option v-for="horario in horariosAtendimento" :key="horario" :value="horario">
+                        {{ horario }}
+                    </option>
+                </select>
             </div>
         </div>
+
 
         <!-- Valor da Consulta -->
         <div class="col-span-2 md:col-span-1">
@@ -216,6 +221,12 @@ export default class CadastroMedico extends Vue {
         'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
         'Oncologia', 'Pneumologia', 'Reumatologia'
     ]
+
+    horariosAtendimento = [
+        '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+        '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+    ]
+
 
     submitForm() {
         this.$emit('submit', this.medico)
