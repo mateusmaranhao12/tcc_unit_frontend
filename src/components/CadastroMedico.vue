@@ -3,7 +3,7 @@
 
         <!-- Nome -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nome <span class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-user text-xl"></i>
@@ -15,7 +15,7 @@
 
         <!-- Sobrenome -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Sobrenome</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sobrenome <span class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-user text-xl"></i>
@@ -27,7 +27,7 @@
 
         <!-- Email -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-envelope text-xl"></i>
@@ -39,7 +39,7 @@
 
         <!-- Senha -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <!-- Ícone do Cadeado -->
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
@@ -60,7 +60,7 @@
 
         <!-- Genero -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Gênero</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Gênero <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-venus-mars text-xl"></i>
@@ -77,7 +77,7 @@
 
         <!--CRM-->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">CRM</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">CRM <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-id-card text-xl"></i>
@@ -89,7 +89,7 @@
 
         <!-- Especialidade -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Especialidade</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Especialidade <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-user-md text-xl"></i>
@@ -104,7 +104,7 @@
 
         <!--Telefone-->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-phone text-xl"></i>
@@ -116,7 +116,7 @@
 
         <!-- Data de Nascimento -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
@@ -128,7 +128,7 @@
 
         <!--CPF-->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">CPF <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-id-card text-xl"></i>
@@ -140,7 +140,7 @@
 
         <!-- Endereço -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Endereço <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-map-marker-alt text-xl"></i>
@@ -152,7 +152,7 @@
 
         <!-- Horário de Atendimento -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Horário de Atendimento</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Horário de Atendimento <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-clock text-xl"></i>
@@ -170,7 +170,7 @@
 
         <!-- Valor da Consulta -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Valor da Consulta</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor da Consulta <span class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-brazilian-real-sign text-xl"></i>
@@ -183,7 +183,7 @@
 
         <!-- Foto de Perfil -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil <span class="text-red-800">*</span></label>
             <div class="flex items-center space-x-4">
                 <!-- Círculo para a Pré-visualização da Imagem -->
                 <div v-if="medico.imagem" class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">
