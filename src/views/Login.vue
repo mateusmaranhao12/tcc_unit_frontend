@@ -11,47 +11,27 @@
                 class="btn-toggle">Login Médico</button>
         </div>
 
-        <!-- Formulário de Login Paciente -->
-        <form v-if="tipoUsuario === 'paciente'" class="form-login grid grid-cols-1 gap-6 mt-6">
-            <input type="email" v-model="loginPaciente.email" placeholder="E-mail" class="input-field" >
-            <input type="password" v-model="loginPaciente.senha" placeholder="Senha" class="input-field" >
-            <div class="flex justify-end">
-                <button type="submit" class="btn-submit">Fazer login</button>
-            </div>
-        </form>
-
-        <!-- Formulário de Login Médico -->
-        <form v-if="tipoUsuario === 'medico'" class="form-login grid grid-cols-1 gap-6 mt-6">
-            <input type="email" v-model="loginMedico.email" placeholder="E-mail" class="input-field" >
-            <input type="password" v-model="loginMedico.senha" placeholder="Senha" class="input-field" >
-            <div class="flex justify-end">
-                <button type="submit" class="btn-submit">Fazer login</button>
-            </div>
-        </form>
+        <!-- Formulário de Login -->
+        <LoginPaciente v-if="tipoUsuario === 'paciente'" />
+        <LoginMedico v-if="tipoUsuario === 'medico'" />
     </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import NavbarIndex from '@/components/NavbarIndex.vue';
+import LoginPaciente from '@/components/LoginPaciente.vue';
+import LoginMedico from '@/components/LoginMedico.vue';
 
 @Options({
     components: {
-        NavbarIndex
+        NavbarIndex,
+        LoginPaciente,
+        LoginMedico
     }
 })
 export default class Login extends Vue {
     tipoUsuario = 'paciente'
-
-    loginPaciente = {
-        email: '',
-        senha: ''
-    }
-
-    loginMedico = {
-        email: '',
-        senha: ''
-    }
 }
 </script>
 
