@@ -41,11 +41,20 @@
         <div class="col-span-2 md:col-span-1">
             <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
             <div class="relative flex items-center">
+                <!-- Ícone do Cadeado -->
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-lock text-xl"></i>
                 </div>
-                <input type="password" v-model="paciente.senha" placeholder="Senha"
+
+                <!-- Input de Senha -->
+                <input :type="senhaVisivel ? 'text' : 'password'" v-model="paciente.senha" placeholder="Senha"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
+
+                <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
+                <button type="button" @click="toggleSenha"
+                    class="absolute right-2 cursor-pointer text-green-600 hover:text-green-800 focus:outline-none">
+                    <i :class="senhaVisivel ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                </button>
             </div>
         </div>
 
@@ -56,7 +65,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-phone text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.telefone" placeholder="Telefone"
+                <input type="text" v-model="paciente.telefone" v-mask="'(##) #####-####'" placeholder="Telefone"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -80,7 +89,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-id-card text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.cpf" placeholder="CPF"
+                <input type="text" v-model="paciente.cpf" v-mask="'###.###.###-##'" placeholder="CPF"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -121,7 +130,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-hospital text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.convenio" placeholder="Convênio ou Particular" class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10
+                <input type="text" @input="formatarConvenio" v-model="paciente.convenio"
+                    placeholder="Convênio ou Particular" class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10
                      focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -135,12 +145,19 @@
             </div>
         </div>
 
-
-        <!--Imagem-->
+        <!-- Foto de Perfil -->
         <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil</label>
-            <input style="cursor: pointer;" type="file" @change="uploadImagem" accept="image/*"
-                class="input-field border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
+            <div class="flex items-center space-x-4">
+                <!-- Círculo para a Pré-visualização da Imagem -->
+                <div v-if="paciente.imagem" class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">
+                    <img :src="paciente.imagem" alt="Foto de Perfil" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Input de Upload de Imagem -->
+                <input style="cursor: pointer;" type="file" @change="uploadImagem" accept="image/*"
+                    class="input-field border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
+            </div>
         </div>
 
         <div class="flex justify-end col-span-2">
@@ -150,12 +167,19 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
+import { mask } from 'vue-the-mask'
 
 @Options({
     components: {
+    },
+
+    directives: {
+        mask
     }
 })
 export default class CadastroPaciente extends Vue {
+
+    senhaVisivel = false
 
     paciente = {
         nome: '',
@@ -172,11 +196,28 @@ export default class CadastroPaciente extends Vue {
         imagem: ''
     }
 
-    uploadImagem(event: Event) {
+    // Upload de Imagem e Atualização do Preview
+    public uploadImagem(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
             this.paciente.imagem = URL.createObjectURL(file);
         }
+    }
+
+    //formatar convenio
+    public formatarConvenio(event: Event) {
+        let valor = (event.target as HTMLInputElement).value
+
+        // Remove qualquer caractere que não seja letra ou espaço
+        valor = valor.replace(/[^A-Za-zÀ-ÿ\s]/g, '')
+
+        // Atualiza o campo formatado
+        this.paciente.convenio = valor
+    }
+
+    //mostrar senha
+    public toggleSenha() {
+        this.senhaVisivel = !this.senhaVisivel
     }
 
 }
