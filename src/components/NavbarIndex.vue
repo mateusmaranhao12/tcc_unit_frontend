@@ -6,7 +6,7 @@
         <span class="text-2xl font-bold text-green-600">App Saude+</span>
       </div>
 
-      <!-- Navigation Links Centralizados -->
+      <!-- Navigation Links Centralizados (Apenas em telas grandes) -->
       <div class="hidden md:flex flex-1 justify-center">
         <ul class="flex space-x-10">
           <li>
@@ -29,8 +29,8 @@
         </ul>
       </div>
 
-      <!-- Botões de Login e Cadastro -->
-      <div class="flex items-center flex-1 justify-end space-x-4">
+      <!-- Botões de Login e Cadastro (Apenas em telas grandes) -->
+      <div class="hidden md:flex items-center flex-1 justify-end space-x-4">
         <router-link to="/login" class="text-gray-800 hover:text-gray-900 text-lg font-semibold">Login</router-link>
         <router-link to="/cadastro"
           class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">Cadastre-se</router-link>
