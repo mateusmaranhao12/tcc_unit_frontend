@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="submitForm" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <form @submit.prevent="cadastrarMedico" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
         <!-- Nome -->
         <div class="col-span-2 md:col-span-1">
@@ -212,10 +212,12 @@
     </form>
 </template>
 <script lang="ts">
+import axios from 'axios'
 import { Options, Vue } from 'vue-class-component'
 import { mask } from 'vue-the-mask'
 
 @Options({
+
     emits: ['submit'],
     directives: {
         mask
@@ -255,10 +257,6 @@ export default class CadastroMedico extends Vue {
         '16:00 - 17:00', '17:00 - 18:00'
     ]
 
-    submitForm() {
-        this.$emit('submit', this.medico)
-    }
-
     //formatar valor da consulta
     formatarValorConsulta(event: Event) {
         let valor = (event.target as HTMLInputElement).value
@@ -281,6 +279,33 @@ export default class CadastroMedico extends Vue {
     //mostrar senha
     public toggleSenha() {
         this.senhaVisivel = !this.senhaVisivel
+    }
+
+    //cadastrar medico
+    async cadastrarMedico() {
+        try {
+            console.log('Enviando dados do médico para o backend...')
+
+            // Preparar os dados para o envio
+            const payload = {
+                ...this.medico,
+                horarios: JSON.stringify(this.medico.horarios) // Converter array para JSON
+            }
+
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_medico.php', payload)
+
+            console.log('Resposta do servidor:', response.data)
+
+            if (response.data.success) {
+                alert('Médico cadastrado com sucesso!')
+                this.$emit('submit', this.medico)
+            } else {
+                alert('Erro ao cadastrar médico: ' + response.data.message)
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error)
+            alert('Erro ao conectar ao servidor.')
+        }
     }
 
 }

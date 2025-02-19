@@ -1,5 +1,5 @@
 <template>
-    <form class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <form @submit.prevent="cadastrarPaciente" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
         <!-- Nome -->
         <div class="col-span-2 md:col-span-1">
@@ -15,7 +15,8 @@
 
         <!-- Sobrenome -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Sobrenome <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sobrenome <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-user text-xl"></i>
@@ -27,7 +28,8 @@
 
         <!-- Email -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-envelope text-xl"></i>
@@ -39,7 +41,8 @@
 
         <!-- Senha -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center">
                 <!-- Ícone do Cadeado -->
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
@@ -60,7 +63,8 @@
 
         <!--Telefone-->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-phone text-xl"></i>
@@ -72,7 +76,8 @@
 
         <!-- Data de Nascimento -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
@@ -96,7 +101,8 @@
 
         <!-- Endereço -->
         <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Endereço <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Endereço <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-map-marker-alt text-xl"></i>
@@ -108,7 +114,8 @@
 
         <!--Gênero-->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Gênero <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Gênero <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-venus-mars text-xl"></i>
@@ -125,7 +132,8 @@
 
         <!-- Convênio -->
         <div class="col-span-2 md:col-span-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Convênio ou Particular <span class="text-red-800">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Convênio ou Particular <span
+                    class="text-red-800">*</span></label>
             <div class="relative flex items-center h-10 w-full">
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-hospital text-xl"></i>
@@ -166,12 +174,13 @@
     </form>
 </template>
 <script lang="ts">
+import axios from 'axios';
 import { Options, Vue } from 'vue-class-component'
 import { mask } from 'vue-the-mask'
 
 @Options({
-    components: {
-    },
+
+    emits: ['submit'],
 
     directives: {
         mask
@@ -218,6 +227,28 @@ export default class CadastroPaciente extends Vue {
     //mostrar senha
     public toggleSenha() {
         this.senhaVisivel = !this.senhaVisivel
+    }
+
+    //cadastrar paciente
+    async cadastrarPaciente() {
+        try {
+            console.log('Enviando dados do paciente para o backend...')
+
+            // Enviar os dados para o backend (cadastrar_paciente.php)
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_paciente.php', this.paciente)
+
+            console.log('Resposta do servidor:', response.data)
+
+            if (response.data.success) {
+                alert('Paciente cadastrado com sucesso!')
+                this.$emit('submit', this.paciente)
+            } else {
+                alert('Erro ao cadastrar paciente: ' + response.data.message)
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error)
+            alert('Erro ao conectar ao servidor.')
+        }
     }
 
 }

@@ -12,10 +12,10 @@
         </div>
 
         <!-- Formulário Paciente -->
-        <CadastroPaciente v-if="tipoUsuario === 'paciente'" @submit="cadastrarPaciente" />
+        <CadastroPaciente v-if="tipoUsuario === 'paciente'" @submit="handleCadastro" />
 
         <!-- Formulário Médico -->
-        <CadastroMedico v-if="tipoUsuario === 'medico'" @submit="cadastrarMedico" />
+        <CadastroMedico v-if="tipoUsuario === 'medico'" @submit="handleCadastro" />
 
     </div>
 </template>
@@ -33,17 +33,16 @@ import CadastroPaciente from '@/components/CadastroPaciente.vue'
         CadastroPaciente
     }
 })
+
 export default class Cadastro extends Vue {
     tipoUsuario = 'paciente'
 
-    cadastrarMedico(dadosMedico: any) {
-        console.log('Médico cadastrado:', dadosMedico)
-    }
-
-    cadastrarPaciente(dadosPaciente: any) {
-        console.log('Paciente cadastrado:', dadosPaciente)
+    // Recebe os dados do evento emitido pelos componentes filhos
+    handleCadastro(dados: any) {
+        console.log('Cadastro recebido:', dados)
     }
 }
+
 </script>
 
 <style lang="scss">
