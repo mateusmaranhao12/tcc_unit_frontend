@@ -138,9 +138,12 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-hospital text-xl"></i>
                 </div>
-                <input type="text" @input="formatarConvenio" v-model="paciente.convenio"
-                    placeholder="Convênio ou Particular" class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10
-                     focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
+                <select v-model="paciente.convenio"
+                    class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
+                    <option value="">Selecione um Convênio</option>
+                    <option value="Particular">Particular</option>
+                    <option v-for="convenio in listaConvenios" :key="convenio" :value="convenio">{{ convenio }}</option>
+                </select>
             </div>
         </div>
 
@@ -213,16 +216,11 @@ export default class CadastroPaciente extends Vue {
         }
     }
 
-    //formatar convenio
-    public formatarConvenio(event: Event) {
-        let valor = (event.target as HTMLInputElement).value
-
-        // Remove qualquer caractere que não seja letra ou espaço
-        valor = valor.replace(/[^A-Za-zÀ-ÿ\s]/g, '')
-
-        // Atualiza o campo formatado
-        this.paciente.convenio = valor
-    }
+    //lista de convenios
+    listaConvenios = [
+        'Amil', 'Bradesco Saúde', 'Golden Cross', 'Hapvida', 'NotreDame Intermédica',
+        'Porto Seguro Saúde', 'SulAmérica Saúde', 'Unimed', 'São Francisco Saúde', 'Outros'
+    ]
 
     //mostrar senha
     public toggleSenha() {
