@@ -1,4 +1,10 @@
 <template>
+    <!-- Alerta aparece quando há uma mensagem -->
+    <div v-if="mensagemAlerta" :class="estiloAlerta"
+        class="flex items-center justify-between p-4 rounded-lg shadow-md mb-4">
+        <span class="text-sm font-semibold">{{ mensagemAlerta }}</span>
+    </div>
+
     <form @submit.prevent="cadastrarPaciente" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
         <!-- Nome -->
@@ -182,15 +188,18 @@ import { Options, Vue } from 'vue-class-component'
 import { mask } from 'vue-the-mask'
 
 @Options({
-
     emits: ['submit'],
-
-    directives: {
-        mask
-    }
+    components: {},
+    directives: { mask }
 })
 export default class CadastroPaciente extends Vue {
 
+    // Alerta
+    mensagemAlerta = ''
+    tipoAlerta: 'sucesso' | 'erro' | '' = ''
+    mostrarAlerta = false
+
+    // Senha visível
     senhaVisivel = false
 
     paciente = {
@@ -208,6 +217,17 @@ export default class CadastroPaciente extends Vue {
         imagem: ''
     }
 
+    // Lista de convênios
+    listaConvenios = [
+        'Amil', 'Bradesco Saúde', 'Golden Cross', 'Hapvida', 'NotreDame Intermédica',
+        'Porto Seguro Saúde', 'SulAmérica Saúde', 'Unimed', 'São Francisco Saúde', 'Outros'
+    ]
+
+    // Mostrar senha
+    public toggleSenha() {
+        this.senhaVisivel = !this.senhaVisivel
+    }
+
     // Upload de Imagem e Atualização do Preview
     public uploadImagem(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0];
@@ -216,60 +236,80 @@ export default class CadastroPaciente extends Vue {
         }
     }
 
-    //lista de convenios
-    listaConvenios = [
-        'Amil', 'Bradesco Saúde', 'Golden Cross', 'Hapvida', 'NotreDame Intermédica',
-        'Porto Seguro Saúde', 'SulAmérica Saúde', 'Unimed', 'São Francisco Saúde', 'Outros'
-    ]
-
-    //mostrar senha
-    public toggleSenha() {
-        this.senhaVisivel = !this.senhaVisivel
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.tipoAlerta === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500';
     }
 
-    //cadastrar paciente
+    // Cadastrar paciente
     async cadastrarPaciente() {
         try {
             console.log('Enviando dados do paciente para o backend...')
 
-            // Enviar os dados para o backend (cadastrar_paciente.php)
-            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_paciente.php', this.paciente)
+            // Limpa a mensagem anterior antes de exibir uma nova
+            this.mensagemAlerta = ''
+            this.mostrarAlerta = false // Oculta alerta antes de exibir um novo
 
-            console.log('Resposta do servidor:', response.data)
+            const response = await axios.post(
+                'http://localhost/Projetos/tcc_unit/backend/api/cadastrar_paciente.php',
+                this.paciente
+            )
 
             if (response.data.success) {
-                alert('Paciente cadastrado com sucesso!')
-                this.$emit('submit', this.paciente)
-                this.limparFormulario()
+                this.mensagemAlerta = 'Paciente cadastrado com sucesso!';
+                this.tipoAlerta = 'sucesso';
+                this.mostrarAlerta = true;
+                this.limparFormulario();
             } else {
-                alert('Erro ao cadastrar paciente: ' + response.data.message)
+                this.mensagemAlerta = response.data.message
+                this.tipoAlerta = 'erro'
+                this.mostrarAlerta = true
             }
+
+            // Esconder o alerta após 5 segundos
+            setTimeout(() => {
+                this.mensagemAlerta = ''
+                this.mostrarAlerta = false
+            }, 5000);
+
         } catch (error) {
             console.error('Erro na requisição:', error)
-            alert('Erro ao conectar ao servidor.')
+            this.mensagemAlerta = 'Erro ao conectar ao servidor.'
+            this.tipoAlerta = 'erro'
+            this.mostrarAlerta = true
+
+            // Esconder o alerta após 5 segundos
+            setTimeout(() => {
+                this.mensagemAlerta = ''
+                this.mostrarAlerta = false
+            }, 5000);
         }
     }
 
+    // Limpar formulário
     private limparFormulario() {
-        this.paciente.nome = '',
-        this.paciente.sobrenome = '',
-        this.paciente.email = '',
-        this.paciente.senha = '',
-        this.paciente.cpf = '',
-        this.paciente.dataNascimento = '',
-        this.paciente.endereco = '',
-        this.paciente.telefone = '',
-        this.paciente.genero = '',
-        this.paciente.convenio = '',
-        this.paciente.historico = '',
-        this.paciente.imagem = ''
+        this.paciente = {
+            nome: '',
+            sobrenome: '',
+            email: '',
+            senha: '',
+            cpf: '',
+            dataNascimento: '',
+            endereco: '',
+            telefone: '',
+            genero: '',
+            convenio: '',
+            historico: '',
+            imagem: ''
+        };
 
         // Reseta o input de imagem
-        const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
+        const inputImagem = this.$refs.inputImagem as HTMLInputElement | null;
         if (inputImagem) {
             inputImagem.value = ''
         }
     }
-
 }
 </script>
