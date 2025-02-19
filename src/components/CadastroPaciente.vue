@@ -166,7 +166,7 @@
                 </div>
 
                 <!-- Input de Upload de Imagem -->
-                <input style="cursor: pointer;" type="file" @change="uploadImagem" accept="image/*"
+                <input ref="inputImagem" style="cursor: pointer;" type="file" @change="uploadImagem" accept="image/*"
                     class="input-field border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -240,12 +240,34 @@ export default class CadastroPaciente extends Vue {
             if (response.data.success) {
                 alert('Paciente cadastrado com sucesso!')
                 this.$emit('submit', this.paciente)
+                this.limparFormulario()
             } else {
                 alert('Erro ao cadastrar paciente: ' + response.data.message)
             }
         } catch (error) {
             console.error('Erro na requisição:', error)
             alert('Erro ao conectar ao servidor.')
+        }
+    }
+
+    private limparFormulario() {
+        this.paciente.nome = '',
+        this.paciente.sobrenome = '',
+        this.paciente.email = '',
+        this.paciente.senha = '',
+        this.paciente.cpf = '',
+        this.paciente.dataNascimento = '',
+        this.paciente.endereco = '',
+        this.paciente.telefone = '',
+        this.paciente.genero = '',
+        this.paciente.convenio = '',
+        this.paciente.historico = '',
+        this.paciente.imagem = ''
+
+        // Reseta o input de imagem
+        const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
+        if (inputImagem) {
+            inputImagem.value = ''
         }
     }
 
