@@ -1,4 +1,10 @@
 <template>
+    <!-- Alerta aparece quando há uma mensagem -->
+    <div v-if="mensagemAlerta" :class="estiloAlerta"
+        class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+        <span class="text-sm font-semibold"><i :class="iconeAlerta"></i> {{ mensagemAlerta }}</span>
+    </div>
+
     <form @submit.prevent="cadastrarMedico" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
         <!-- Nome -->
@@ -226,6 +232,11 @@ import { mask } from 'vue-the-mask'
 
 export default class CadastroMedico extends Vue {
 
+    // Alerta
+    mensagemAlerta = ''
+    tipoAlerta: 'sucesso' | 'erro' | '' = ''
+    mostrarAlerta = false
+
     senhaVisivel = false
 
     medico = {
@@ -281,6 +292,19 @@ export default class CadastroMedico extends Vue {
         this.senhaVisivel = !this.senhaVisivel
     }
 
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.tipoAlerta === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500';
+    }
+
+    get iconeAlerta(): string {
+        return this.tipoAlerta === 'sucesso'
+            ? 'fa-solid fa-circle-check'
+            : 'fa-solid fa-circle-xmark'
+    }
+
     //cadastrar medico
     async cadastrarMedico() {
         try {
@@ -294,18 +318,38 @@ export default class CadastroMedico extends Vue {
 
             const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_medico.php', payload)
 
-            console.log('Resposta do servidor:', response.data)
+            console.log('Resposta completa do servidor:', response) // ✅ Log completo da resposta do backend
+            console.log('Resposta do servidor (data):', response.data) // ✅ Log apenas dos dados retornados
 
             if (response.data.success) {
-                alert('Médico cadastrado com sucesso!')
+                this.tipoAlerta = 'sucesso'
+                this.mensagemAlerta = 'Médico cadastrado com sucesso!'
+                this.mostrarAlerta = true
                 this.$emit('submit', this.medico)
                 this.limparFormulario()
             } else {
-                alert('Erro ao cadastrar médico: ' + response.data.message)
+                this.mensagemAlerta = response.data.message
+                this.tipoAlerta = 'erro'
+                this.mostrarAlerta = true
             }
+
+            // Esconder o alerta após 5 segundos
+            setTimeout(() => {
+                this.mensagemAlerta = ''
+                this.mostrarAlerta = false
+            }, 5000)
+
         } catch (error) {
             console.error('Erro na requisição:', error)
-            alert('Erro ao conectar ao servidor.')
+            this.mensagemAlerta = 'Erro ao conectar ao servidor.'
+            this.tipoAlerta = 'erro'
+            this.mostrarAlerta = true
+
+            // Esconder o alerta após 5 segundos
+            setTimeout(() => {
+                this.mensagemAlerta = ''
+                this.mostrarAlerta = false
+            }, 5000)
         }
     }
 

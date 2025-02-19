@@ -1,8 +1,8 @@
 <template>
     <!-- Alerta aparece quando há uma mensagem -->
     <div v-if="mensagemAlerta" :class="estiloAlerta"
-        class="flex items-center justify-between p-4 rounded-lg shadow-md mb-4">
-        <span class="text-sm font-semibold">{{ mensagemAlerta }}</span>
+        class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+        <span class="text-sm font-semibold"><i :class="iconeAlerta"></i> {{ mensagemAlerta }}</span>
     </div>
 
     <form @submit.prevent="cadastrarPaciente" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -243,10 +243,15 @@ export default class CadastroPaciente extends Vue {
             : 'bg-red-100 text-red-800 border border-red-500';
     }
 
+    get iconeAlerta(): string {
+        return this.tipoAlerta === 'sucesso'
+        ? 'fa-solid fa-circle-check'
+        : 'fa-solid fa-circle-xmark'
+    }
+
     // Cadastrar paciente
     async cadastrarPaciente() {
         try {
-            console.log('Enviando dados do paciente para o backend...')
 
             // Limpa a mensagem anterior antes de exibir uma nova
             this.mensagemAlerta = ''
@@ -258,10 +263,10 @@ export default class CadastroPaciente extends Vue {
             )
 
             if (response.data.success) {
-                this.mensagemAlerta = 'Paciente cadastrado com sucesso!';
-                this.tipoAlerta = 'sucesso';
-                this.mostrarAlerta = true;
-                this.limparFormulario();
+                this.mensagemAlerta = 'Paciente cadastrado com sucesso!'
+                this.tipoAlerta = 'sucesso'
+                this.mostrarAlerta = true
+                this.limparFormulario()
             } else {
                 this.mensagemAlerta = response.data.message
                 this.tipoAlerta = 'erro'
@@ -272,7 +277,7 @@ export default class CadastroPaciente extends Vue {
             setTimeout(() => {
                 this.mensagemAlerta = ''
                 this.mostrarAlerta = false
-            }, 5000);
+            }, 5000)
 
         } catch (error) {
             console.error('Erro na requisição:', error)
@@ -284,7 +289,7 @@ export default class CadastroPaciente extends Vue {
             setTimeout(() => {
                 this.mensagemAlerta = ''
                 this.mostrarAlerta = false
-            }, 5000);
+            }, 5000)
         }
     }
 
