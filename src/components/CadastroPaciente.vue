@@ -97,7 +97,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
                 </div>
-                <input :class="{ 'border-red-500': campoVazio('dataNascimento') }" type="date"
+                <input :max="dataMaxima" :class="{ 'border-red-500': campoVazio('dataNascimento') }" type="date"
                     v-model="paciente.dataNascimento"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
@@ -369,6 +369,9 @@ export default class CadastroPaciente extends Vue {
     public campoVazio(campo: keyof typeof this.paciente): boolean {
         return this.camposVazios.includes(campo)
     }
+
+    //data maxima
+    dataMaxima: string = new Date().toISOString().split('T')[0]
 
     //mostrar mensagem alerta
     private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {

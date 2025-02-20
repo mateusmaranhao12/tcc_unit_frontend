@@ -144,7 +144,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
                 </div>
-                <input :class="{ 'border-red-500': campoVazio('dataNascimento') }" type="date"
+                <input :max="dataMaxima" :class="{ 'border-red-500': campoVazio('dataNascimento') }" type="date"
                     v-model="medico.dataNascimento"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
@@ -184,8 +184,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 <label v-for="horario in horariosAtendimento" :key="horario" class="flex items-center cursor-pointer">
                     <!-- Checkbox -->
-                    <input type="checkbox" :value="horario"
-                        v-model="medico.horarios" class="hidden peer">
+                    <input type="checkbox" :value="horario" v-model="medico.horarios" class="hidden peer">
                     <!-- Ícone do checkbox customizado -->
                     <div
                         class="w-5 h-5 border-2 border-gray-400 rounded-md peer-checked:bg-green-600 peer-checked:border-green-600 flex items-center justify-center transition">
@@ -277,7 +276,7 @@ export default class CadastroMedico extends Vue {
     especialidades = [
         'Alergologia', 'Ortopedia', 'Cardiologia', 'Dermatologia', 'Gastroenterologia',
         'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
-        'Oncologia', 'Pneumologia', 'Reumatologia'
+        'Oncologia', 'Pneumologia', 'Reumatologia', 'Pediatria'
     ]
 
     horariosAtendimento = [
@@ -335,8 +334,12 @@ export default class CadastroMedico extends Vue {
                 return
             }
 
+            // Converte a imagem para base64
+            const imagemBase64 = file ? await this.converterImagemParaBase64(file) : ''
+
             const payload = {
                 ...this.medico,
+                imagem: imagemBase64, // Define a imagem convertida para base64
                 horarios: JSON.stringify(this.medico.horarios)
             }
 
@@ -382,6 +385,16 @@ export default class CadastroMedico extends Vue {
         if (inputImagem) {
             inputImagem.value = ''
         }
+    }
+
+    // Função para converter a imagem para base64
+    public async converterImagemParaBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onload = () => resolve(reader.result as string)
+            reader.onerror = error => reject(error)
+        })
     }
 
     //formatar valor da consulta
@@ -451,6 +464,9 @@ export default class CadastroMedico extends Vue {
     public campoVazio(campo: keyof typeof this.medico): boolean {
         return this.camposVazios.includes(campo)
     }
+
+    //data maxima
+    dataMaxima: string = new Date().toISOString().split('T')[0]
 
     //mostrar mensagem alerta
     private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
