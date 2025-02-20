@@ -41,7 +41,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-envelope text-xl"></i>
                 </div>
-                <input type="email" v-model="medico.email" placeholder="E-mail"
+                <input type="text" v-model="medico.email" placeholder="E-mail"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -288,13 +288,6 @@ export default class CadastroMedico extends Vue {
             const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_medico.php', payload)
 
             console.log('Resposta do servidor:', response.data)
-
-            //se a senha for menos de 5 caracteres
-            if (this.medico.senha.length < 5) {
-                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'A senha deve ter no mínimo 5 caracteres', 'erro')
-
-                return // Interrompe o fluxo de envio se a senha for inválida
-            }
 
             if (response.data.success) {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-check', 'Médico cadastrado com sucesso!', 'sucesso')

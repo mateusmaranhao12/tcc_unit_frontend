@@ -41,7 +41,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-envelope text-xl"></i>
                 </div>
-                <input type="email" v-model="paciente.email" placeholder="E-mail"
+                <input type="text" v-model="paciente.email" placeholder="E-mail"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -281,8 +281,6 @@ export default class CadastroPaciente extends Vue {
     public toggleSenha() {
         this.senhaVisivel = !this.senhaVisivel
     }
-
-
 
     //validar senha
     public validarSenha() {
