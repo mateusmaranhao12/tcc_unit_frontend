@@ -1,8 +1,9 @@
 <template>
     <!-- Alerta aparece quando há uma mensagem -->
-    <div v-if="mensagemAlerta" :class="estiloAlerta"
+    <div v-if="mensagem_alerta" :class="estiloAlerta"
         class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
-        <span class="text-sm font-semibold"><i :class="iconeAlerta"></i> {{ mensagemAlerta }}</span>
+        <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
+        <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
     </div>
 
     <form @submit.prevent="cadastrarPaciente" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -56,7 +57,8 @@
                 </div>
 
                 <!-- Input de Senha -->
-                <input :type="senhaVisivel ? 'text' : 'password'" v-model="paciente.senha" placeholder="Senha"
+                <input @input="validarSenha" :type="senhaVisivel ? 'text' : 'password'" v-model="paciente.senha"
+                    placeholder="Senha"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
 
                 <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
@@ -65,6 +67,9 @@
                     <i :class="senhaVisivel ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
                 </button>
             </div>
+
+            <!--Validar senha-->
+            <span :style="{ color: corMensagemSenha }">{{ mensagemSenha }}</span>
         </div>
 
         <!--Telefone-->
@@ -195,12 +200,12 @@ import { mask } from 'vue-the-mask'
 export default class CadastroPaciente extends Vue {
 
     // Alerta
-    mensagemAlerta = ''
-    tipoAlerta: 'sucesso' | 'erro' | '' = ''
-    mostrarAlerta = false
+    mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
 
-    // Senha visível
+    // Senha
     senhaVisivel = false
+    mensagemSenha = ''
+    corMensagemSenha = ''
 
     paciente = {
         nome: '',
@@ -223,39 +228,9 @@ export default class CadastroPaciente extends Vue {
         'Porto Seguro Saúde', 'SulAmérica Saúde', 'Unimed', 'São Francisco Saúde', 'Outros'
     ]
 
-    // Mostrar senha
-    public toggleSenha() {
-        this.senhaVisivel = !this.senhaVisivel
-    }
-
-    // Upload de Imagem e Atualização do Preview
-    public uploadImagem(event: Event) {
-        const file = (event.target as HTMLInputElement).files?.[0];
-        if (file) {
-            this.paciente.imagem = URL.createObjectURL(file);
-        }
-    }
-
-    // Computed para retornar o estilo do alerta com base no tipo
-    get estiloAlerta(): string {
-        return this.tipoAlerta === 'sucesso'
-            ? 'bg-green-100 text-green-800 border border-green-500'
-            : 'bg-red-100 text-red-800 border border-red-500';
-    }
-
-    get iconeAlerta(): string {
-        return this.tipoAlerta === 'sucesso'
-        ? 'fa-solid fa-circle-check'
-        : 'fa-solid fa-circle-xmark'
-    }
-
     // Cadastrar paciente
     async cadastrarPaciente() {
         try {
-
-            // Limpa a mensagem anterior antes de exibir uma nova
-            this.mensagemAlerta = ''
-            this.mostrarAlerta = false // Oculta alerta antes de exibir um novo
 
             const response = await axios.post(
                 'http://localhost/Projetos/tcc_unit/backend/api/cadastrar_paciente.php',
@@ -263,33 +238,15 @@ export default class CadastroPaciente extends Vue {
             )
 
             if (response.data.success) {
-                this.mensagemAlerta = 'Paciente cadastrado com sucesso!'
-                this.tipoAlerta = 'sucesso'
-                this.mostrarAlerta = true
+                this.mostrarMensagemAlerta('fa-solid fa-circle-check', 'Paciente cadastrado com sucesso!', 'sucesso')
                 this.limparFormulario()
             } else {
-                this.mensagemAlerta = response.data.message
-                this.tipoAlerta = 'erro'
-                this.mostrarAlerta = true
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', response.data.message, 'erro')
             }
-
-            // Esconder o alerta após 5 segundos
-            setTimeout(() => {
-                this.mensagemAlerta = ''
-                this.mostrarAlerta = false
-            }, 5000)
 
         } catch (error) {
             console.error('Erro na requisição:', error)
-            this.mensagemAlerta = 'Erro ao conectar ao servidor.'
-            this.tipoAlerta = 'erro'
-            this.mostrarAlerta = true
-
-            // Esconder o alerta após 5 segundos
-            setTimeout(() => {
-                this.mensagemAlerta = ''
-                this.mostrarAlerta = false
-            }, 5000)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao conectar ao servidor', 'erro')
         }
     }
 
@@ -308,13 +265,69 @@ export default class CadastroPaciente extends Vue {
             convenio: '',
             historico: '',
             imagem: ''
-        };
+        }
+
+        this.mensagemSenha = ''
+        this.corMensagemSenha = ''
 
         // Reseta o input de imagem
         const inputImagem = this.$refs.inputImagem as HTMLInputElement | null;
         if (inputImagem) {
             inputImagem.value = ''
         }
+    }
+
+    // Mostrar senha
+    public toggleSenha() {
+        this.senhaVisivel = !this.senhaVisivel
+    }
+
+
+
+    //validar senha
+    public validarSenha() {
+
+        const senha = this.paciente.senha
+        if (senha.length < 5) {
+            this.mensagemSenha = 'Senha fraca'
+            this.corMensagemSenha = 'red'
+        } else if (senha.length >= 5 && senha.length < 8) {
+            this.mensagemSenha = 'Vulnerável'
+            this.corMensagemSenha = 'orange'
+        } else if (senha.length >= 10 && !/[A-Z]/.test(senha)) {
+            this.mensagemSenha = 'Forte'
+            this.corMensagemSenha = 'green'
+        } else if (senha.length >= 10 && /[A-Z]/.test(senha) && /[!@#$%^&*(),.?":{}|<>]/.test(senha)) {
+            this.mensagemSenha = 'Senha muito forte'
+            this.corMensagemSenha = 'darkgreen'
+        } else if (senha.length >= 10) {
+            this.mensagemSenha = 'Forte'
+            this.corMensagemSenha = 'green'
+        }
+
+    }
+
+    // Upload de Imagem e Atualização do Preview
+    public uploadImagem(event: Event) {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+            this.paciente.imagem = URL.createObjectURL(file);
+        }
+    }
+
+    //mostrar mensagem alerta
+    private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
+        this.mensagem_alerta = { icone, mensagem, status }
+        setTimeout(() => {
+            this.mensagem_alerta = null
+        }, 5000)
+    }
+
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.mensagem_alerta?.status === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500';
     }
 }
 </script>

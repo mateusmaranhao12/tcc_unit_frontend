@@ -1,8 +1,9 @@
 <template>
     <!-- Alerta aparece quando há uma mensagem -->
-    <div v-if="mensagemAlerta" :class="estiloAlerta"
+    <div v-if="mensagem_alerta" :class="estiloAlerta"
         class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
-        <span class="text-sm font-semibold"><i :class="iconeAlerta"></i> {{ mensagemAlerta }}</span>
+        <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
+        <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
     </div>
 
     <form @submit.prevent="cadastrarMedico" class="form-cadastro grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -56,7 +57,8 @@
                 </div>
 
                 <!-- Input de Senha -->
-                <input :type="senhaVisivel ? 'text' : 'password'" v-model="medico.senha" placeholder="Senha"
+                <input @input="validarSenha" :type="senhaVisivel ? 'text' : 'password'" v-model="medico.senha"
+                    placeholder="Senha"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
 
                 <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
@@ -65,6 +67,9 @@
                     <i :class="senhaVisivel ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
                 </button>
             </div>
+
+            <!--Validar senha-->
+            <span :style="{ color: corMensagemSenha }">{{ mensagemSenha }}</span>
         </div>
 
         <!-- Genero -->
@@ -233,12 +238,14 @@ import { mask } from 'vue-the-mask'
 export default class CadastroMedico extends Vue {
 
     // Alerta
-    mensagemAlerta = ''
-    tipoAlerta: 'sucesso' | 'erro' | '' = ''
-    mostrarAlerta = false
+    mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
 
+    //senha
     senhaVisivel = false
+    mensagemSenha = ''
+    corMensagemSenha = ''
 
+    // Dados do Médico
     medico = {
         nome: '',
         sobrenome: '',
@@ -268,6 +275,67 @@ export default class CadastroMedico extends Vue {
         '16:00 - 17:00', '17:00 - 18:00'
     ]
 
+    //cadastrar medico
+    async cadastrarMedico() {
+        try {
+            console.log('Enviando dados do médico para o backend...')
+
+            const payload = {
+                ...this.medico,
+                horarios: JSON.stringify(this.medico.horarios)
+            }
+
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_medico.php', payload)
+
+            console.log('Resposta do servidor:', response.data)
+
+            //se a senha for menos de 5 caracteres
+            if (this.medico.senha.length < 5) {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'A senha deve ter no mínimo 5 caracteres', 'erro')
+
+                return // Interrompe o fluxo de envio se a senha for inválida
+            }
+
+            if (response.data.success) {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-check', 'Médico cadastrado com sucesso!', 'sucesso')
+                this.limparFormulario()
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', response.data.message, 'erro')
+            }
+
+        } catch (error) {
+            console.error('Erro na requisição:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao conectar ao servidor', 'erro')
+        }
+    }
+
+    //limpar formulario
+    private limparFormulario() {
+        this.medico.nome = '',
+            this.medico.sobrenome = '',
+            this.medico.email = '',
+            this.medico.senha = '',
+            this.medico.dataNascimento = '',
+            this.medico.genero = '',
+            this.medico.crm = '',
+            this.medico.especialidade = '',
+            this.medico.telefone = '',
+            this.medico.cpf = '',
+            this.medico.endereco = '',
+            this.medico.horarios = [],
+            this.medico.valorConsulta = '',
+            this.medico.imagem = ''
+
+        this.mensagemSenha = ''
+        this.corMensagemSenha = ''
+
+        // Reseta o input de imagem
+        const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
+        if (inputImagem) {
+            inputImagem.value = ''
+        }
+    }
+
     //formatar valor da consulta
     formatarValorConsulta(event: Event) {
         let valor = (event.target as HTMLInputElement).value
@@ -292,89 +360,42 @@ export default class CadastroMedico extends Vue {
         this.senhaVisivel = !this.senhaVisivel
     }
 
+    //validar senha
+    public validarSenha() {
+
+        const senha = this.medico.senha
+        if (senha.length < 5) {
+            this.mensagemSenha = 'Senha fraca'
+            this.corMensagemSenha = 'red'
+        } else if (senha.length >= 5 && senha.length < 8) {
+            this.mensagemSenha = 'Vulnerável'
+            this.corMensagemSenha = 'orange'
+        } else if (senha.length >= 10 && !/[A-Z]/.test(senha)) {
+            this.mensagemSenha = 'Forte'
+            this.corMensagemSenha = 'green'
+        } else if (senha.length >= 10 && /[A-Z]/.test(senha) && /[!@#$%^&*(),.?":{}|<>]/.test(senha)) {
+            this.mensagemSenha = 'Senha muito forte'
+            this.corMensagemSenha = 'darkgreen'
+        } else if (senha.length >= 10) {
+            this.mensagemSenha = 'Forte'
+            this.corMensagemSenha = 'green'
+        }
+
+    }
+
+    //mostrar mensagem alerta
+    private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
+        this.mensagem_alerta = { icone, mensagem, status }
+        setTimeout(() => {
+            this.mensagem_alerta = null
+        }, 5000)
+    }
+
     // Computed para retornar o estilo do alerta com base no tipo
     get estiloAlerta(): string {
-        return this.tipoAlerta === 'sucesso'
+        return this.mensagem_alerta?.status === 'sucesso'
             ? 'bg-green-100 text-green-800 border border-green-500'
-            : 'bg-red-100 text-red-800 border border-red-500';
-    }
-
-    get iconeAlerta(): string {
-        return this.tipoAlerta === 'sucesso'
-            ? 'fa-solid fa-circle-check'
-            : 'fa-solid fa-circle-xmark'
-    }
-
-    //cadastrar medico
-    async cadastrarMedico() {
-        try {
-            console.log('Enviando dados do médico para o backend...')
-
-            // Preparar os dados para o envio
-            const payload = {
-                ...this.medico,
-                horarios: JSON.stringify(this.medico.horarios) // Converter array para JSON
-            }
-
-            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/cadastrar_medico.php', payload)
-
-            console.log('Resposta completa do servidor:', response) // ✅ Log completo da resposta do backend
-            console.log('Resposta do servidor (data):', response.data) // ✅ Log apenas dos dados retornados
-
-            if (response.data.success) {
-                this.tipoAlerta = 'sucesso'
-                this.mensagemAlerta = 'Médico cadastrado com sucesso!'
-                this.mostrarAlerta = true
-                this.$emit('submit', this.medico)
-                this.limparFormulario()
-            } else {
-                this.mensagemAlerta = response.data.message
-                this.tipoAlerta = 'erro'
-                this.mostrarAlerta = true
-            }
-
-            // Esconder o alerta após 5 segundos
-            setTimeout(() => {
-                this.mensagemAlerta = ''
-                this.mostrarAlerta = false
-            }, 5000)
-
-        } catch (error) {
-            console.error('Erro na requisição:', error)
-            this.mensagemAlerta = 'Erro ao conectar ao servidor.'
-            this.tipoAlerta = 'erro'
-            this.mostrarAlerta = true
-
-            // Esconder o alerta após 5 segundos
-            setTimeout(() => {
-                this.mensagemAlerta = ''
-                this.mostrarAlerta = false
-            }, 5000)
-        }
-    }
-
-    //limpar formulario
-    private limparFormulario() {
-        this.medico.nome = '',
-            this.medico.sobrenome = '',
-            this.medico.email = '',
-            this.medico.senha = '',
-            this.medico.dataNascimento = '',
-            this.medico.genero = '',
-            this.medico.crm = '',
-            this.medico.especialidade = '',
-            this.medico.telefone = '',
-            this.medico.cpf = '',
-            this.medico.endereco = '',
-            this.medico.horarios = [],
-            this.medico.valorConsulta = '',
-            this.medico.imagem = ''
-
-        // Reseta o input de imagem
-        const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
-        if (inputImagem) {
-            inputImagem.value = ''
-        }
+            : 'bg-red-100 text-red-800 border border-red-500'
     }
 
 }
