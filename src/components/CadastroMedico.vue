@@ -280,6 +280,14 @@ export default class CadastroMedico extends Vue {
         try {
             console.log('Enviando dados do médico para o backend...')
 
+            // Validação da Imagem antes do cadastro
+            const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
+            const file = inputImagem?.files?.[0] ?? null
+
+            if (!this.validarImagem(file)) {
+                return
+            }
+
             const payload = {
                 ...this.medico,
                 horarios: JSON.stringify(this.medico.horarios)
@@ -346,6 +354,22 @@ export default class CadastroMedico extends Vue {
         if (file) {
             this.medico.imagem = URL.createObjectURL(file);
         }
+    }
+
+    // Validação de imagem (somente png, svg, jpg, jpeg)
+    public validarImagem(file: File | null): boolean {
+        if (!file) {
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Nenhuma imagem selecionada.', 'erro')
+            return false
+        }
+
+        const tiposPermitidos = ['image/png', 'image/svg+xml', 'image/jpg', 'image/jpeg']
+        if (!tiposPermitidos.includes(file.type)) {
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Formato de imagem inválido. Use PNG, SVG, JPG ou JPEG.', 'erro')
+            return false
+        }
+
+        return true
     }
 
     //mostrar senha
