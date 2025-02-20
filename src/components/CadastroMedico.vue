@@ -16,6 +16,7 @@
                     <i class="fa-solid fa-user text-xl"></i>
                 </div>
                 <input type="text" v-model="medico.nome" placeholder="Nome"
+                    :class="{ 'border-red-500': campoVazio('nome') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -29,6 +30,7 @@
                     <i class="fa-solid fa-user text-xl"></i>
                 </div>
                 <input type="text" v-model="medico.sobrenome" placeholder="Sobrenome"
+                    :class="{ 'border-red-500': campoVazio('sobrenome') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -42,6 +44,7 @@
                     <i class="fa-solid fa-envelope text-xl"></i>
                 </div>
                 <input type="text" v-model="medico.email" placeholder="E-mail"
+                    :class="{ 'border-red-500': campoVazio('email') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -58,7 +61,7 @@
 
                 <!-- Input de Senha -->
                 <input @input="validarSenha" :type="senhaVisivel ? 'text' : 'password'" v-model="medico.senha"
-                    placeholder="Senha"
+                    placeholder="Senha" :class="{ 'border-red-500': campoVazio('senha') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
 
                 <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
@@ -80,7 +83,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-venus-mars text-xl"></i>
                 </div>
-                <select v-model="medico.genero"
+                <select v-model="medico.genero" :class="{ 'border-red-500': campoVazio('genero') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
                     <option value="">Selecione o Gênero</option>
                     <option value="Masculino">Masculino</option>
@@ -98,6 +101,7 @@
                     <i class="fa-solid fa-id-card text-xl"></i>
                 </div>
                 <input type="text" v-mask="'#######'" v-model="medico.crm" placeholder="CRM"
+                    :class="{ 'border-red-500': campoVazio('crm') }"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -110,7 +114,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-user-md text-xl"></i>
                 </div>
-                <select v-model="medico.especialidade"
+                <select v-model="medico.especialidade" :class="{ 'border-red-500': campoVazio('especialidade') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
                     <option value="">Selecione a Especialidade</option>
                     <option v-for="esp in especialidades" :key="esp" :value="esp">{{ esp }}</option>
@@ -127,6 +131,7 @@
                     <i class="fa-solid fa-phone text-xl"></i>
                 </div>
                 <input type="text" v-mask="'(##) #####-####'" v-model="medico.telefone" placeholder="Telefone"
+                    :class="{ 'border-red-500': campoVazio('telefone') }"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -139,7 +144,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
                 </div>
-                <input type="date" v-model="medico.dataNascimento"
+                <input :class="{ 'border-red-500': campoVazio('dataNascimento') }" type="date"
+                    v-model="medico.dataNascimento"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -152,6 +158,7 @@
                     <i class="fa-solid fa-id-card text-xl"></i>
                 </div>
                 <input type="text" v-model="medico.cpf" v-mask="'###.###.###-##'" placeholder="CPF"
+                    :class="{ 'border-red-500': campoVazio('cpf') }"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -165,17 +172,20 @@
                     <i class="fa-solid fa-map-marker-alt text-xl"></i>
                 </div>
                 <input type="text" v-model="medico.endereco" placeholder="Endereço do Consultório"
+                    :class="{ 'border-red-500': campoVazio('endereco') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
 
+        <!--Horarios-->
         <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">Horários de Atendimento <span
                     class="text-red-800">*</span></label>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 <label v-for="horario in horariosAtendimento" :key="horario" class="flex items-center cursor-pointer">
                     <!-- Checkbox -->
-                    <input type="checkbox" :value="horario" v-model="medico.horarios" class="hidden peer">
+                    <input type="checkbox" :value="horario"
+                        v-model="medico.horarios" class="hidden peer">
                     <!-- Ícone do checkbox customizado -->
                     <div
                         class="w-5 h-5 border-2 border-gray-400 rounded-md peer-checked:bg-green-600 peer-checked:border-green-600 flex items-center justify-center transition">
@@ -195,8 +205,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-brazilian-real-sign text-xl"></i>
                 </div>
-                <input type="text" v-model="medico.valorConsulta" @input="formatarValorConsulta"
-                    placeholder="Valor da Consulta"
+                <input :class="{ 'border-red-500': campoVazio('valorConsulta') }" type="text"
+                    v-model="medico.valorConsulta" @input="formatarValorConsulta" placeholder="Valor da Consulta"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -212,7 +222,8 @@
                 </div>
 
                 <!-- Input de Upload de Imagem -->
-                <input ref="inputImagem" style="cursor: pointer;" type="file" @change="uploadImagem" accept="image/*"
+                <input :class="{ 'border-red-500': campoVazio('imagem') }" ref="inputImagem" style="cursor: pointer;"
+                    type="file" @change="uploadImagem" accept="image/*"
                     class="input-field border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -275,12 +286,48 @@ export default class CadastroMedico extends Vue {
         '16:00 - 17:00', '17:00 - 18:00'
     ]
 
+    // Lista de campos obrigatórios vazios
+    camposVazios: string[] = []
+
+    // Lista de campos obrigatórios para o cadastro do médico
+    camposObrigatorios: (keyof typeof this.medico)[] = [
+        'nome',
+        'sobrenome',
+        'email',
+        'senha',
+        'dataNascimento',
+        'genero',
+        'crm',
+        'especialidade',
+        'telefone',
+        'cpf',
+        'endereco',
+        'horarios',
+        'valorConsulta',
+        'imagem'
+    ]
+
     //cadastrar medico
     async cadastrarMedico() {
         try {
             console.log('Enviando dados do médico para o backend...')
 
-            // Validação da Imagem antes do cadastro
+            this.camposVazios = [] // Reinicia a lista de campos vazios
+
+            // Verifica todos os campos obrigatórios
+            this.camposObrigatorios.forEach(campo => {
+                if (!this.medico[campo] || (Array.isArray(this.medico[campo]) && (this.medico[campo] as string[]).length === 0)) {
+                    this.camposVazios.push(campo)
+                }
+            })
+
+            // Se houver campos vazios, exibe o alerta e não prossegue
+            if (this.camposVazios.length > 0) {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Preencha todos os campos obrigatórios.', 'erro')
+                return
+            }
+
+            // Validação da imagem antes do envio
             const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
             const file = inputImagem?.files?.[0] ?? null
 
@@ -398,6 +445,11 @@ export default class CadastroMedico extends Vue {
             this.corMensagemSenha = 'green'
         }
 
+    }
+
+    // Função para verificar se o campo está vazio e aplicar a borda vermelha
+    public campoVazio(campo: keyof typeof this.medico): boolean {
+        return this.camposVazios.includes(campo)
     }
 
     //mostrar mensagem alerta

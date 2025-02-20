@@ -16,6 +16,7 @@
                     <i class="fa-solid fa-user text-xl"></i>
                 </div>
                 <input type="text" v-model="paciente.nome" placeholder="Nome"
+                    :class="{ 'border-red-500': campoVazio('nome') }"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -28,7 +29,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-user text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.sobrenome" placeholder="Sobrenome"
+                <input :class="{ 'border-red-500': campoVazio('sobrenome') }" type="text" v-model="paciente.sobrenome"
+                    placeholder="Sobrenome"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -41,7 +43,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
                     <i class="fa-solid fa-envelope text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.email" placeholder="E-mail"
+                <input :class="{ 'border-red-500': campoVazio('email') }" type="text" v-model="paciente.email"
+                    placeholder="E-mail"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
             </div>
         </div>
@@ -57,8 +60,8 @@
                 </div>
 
                 <!-- Input de Senha -->
-                <input @input="validarSenha" :type="senhaVisivel ? 'text' : 'password'" v-model="paciente.senha"
-                    placeholder="Senha"
+                <input :class="{ 'border-red-500': campoVazio('senha') }" @input="validarSenha"
+                    :type="senhaVisivel ? 'text' : 'password'" v-model="paciente.senha" placeholder="Senha"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
 
                 <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
@@ -80,7 +83,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-phone text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.telefone" v-mask="'(##) #####-####'" placeholder="Telefone"
+                <input :class="{ 'border-red-500': campoVazio('telefone') }" type="text" v-model="paciente.telefone"
+                    v-mask="'(##) #####-####'" placeholder="Telefone"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -93,7 +97,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-calendar text-xl"></i>
                 </div>
-                <input type="date" v-model="paciente.dataNascimento"
+                <input :class="{ 'border-red-500': campoVazio('dataNascimento') }" type="date"
+                    v-model="paciente.dataNascimento"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -105,7 +110,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-id-card text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.cpf" v-mask="'###.###.###-##'" placeholder="CPF"
+                <input :class="{ 'border-red-500': campoVazio('cpf') }" type="text" v-model="paciente.cpf"
+                    v-mask="'###.###.###-##'" placeholder="CPF"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -118,7 +124,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-map-marker-alt text-xl"></i>
                 </div>
-                <input type="text" v-model="paciente.endereco" placeholder="Endereço"
+                <input :class="{ 'border-red-500': campoVazio('endereco') }" type="text" v-model="paciente.endereco"
+                    placeholder="Endereço"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
@@ -131,7 +138,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-venus-mars text-xl"></i>
                 </div>
-                <select v-model="paciente.genero"
+                <select :class="{ 'border-red-500': campoVazio('genero') }" v-model="paciente.genero"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
                     <option value="">Selecione o Gênero</option>
                     <option value="Masculino">Masculino</option>
@@ -149,7 +156,7 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-hospital text-xl"></i>
                 </div>
-                <select v-model="paciente.convenio"
+                <select :class="{ 'border-red-500': campoVazio('convenio') }" v-model="paciente.convenio"
                     class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
                     <option value="">Selecione um Convênio</option>
                     <option value="Particular">Particular</option>
@@ -228,15 +235,38 @@ export default class CadastroPaciente extends Vue {
         'Porto Seguro Saúde', 'SulAmérica Saúde', 'Unimed', 'São Francisco Saúde', 'Outros'
     ]
 
+    // Lista de campos obrigatórios vazios
+    camposVazios: string[] = []
+
+    // Lista de campos obrigatórios (excluindo 'historico' e 'imagem' que são opcionais)
+    camposObrigatorios: (keyof typeof this.paciente)[] = [
+        'nome',
+        'sobrenome',
+        'email',
+        'senha',
+        'dataNascimento',
+        'cpf',
+        'endereco',
+        'telefone',
+        'genero',
+        'convenio'
+    ]
+
     // Cadastrar paciente
     async cadastrarPaciente() {
         try {
+            this.camposVazios = [] // Resetar os campos vazios
 
-            // Validação da Imagem antes do cadastro
-            const inputImagem = this.$refs.inputImagem as HTMLInputElement | null
-            const file = inputImagem?.files?.[0] ?? null
+            // Valida apenas os campos obrigatórios
+            this.camposObrigatorios.forEach(campo => {
+                if (!this.paciente[campo]) {
+                    this.camposVazios.push(campo)
+                }
+            })
 
-            if (!this.validarImagem(file)) {
+            // Se houver campos vazios, não prossegue com o envio
+            if (this.camposVazios.length > 0) {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Preencha todos os campos obrigatórios', 'erro')
                 return
             }
 
@@ -257,7 +287,6 @@ export default class CadastroPaciente extends Vue {
             this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao conectar ao servidor', 'erro')
         }
     }
-
     // Limpar formulário
     private limparFormulario() {
         this.paciente = {
@@ -324,7 +353,6 @@ export default class CadastroPaciente extends Vue {
     // Validação de imagem (somente png, svg, jpg, jpeg)
     public validarImagem(file: File | null): boolean {
         if (!file) {
-            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Nenhuma imagem selecionada.', 'erro')
             return false
         }
 
@@ -335,6 +363,11 @@ export default class CadastroPaciente extends Vue {
         }
 
         return true
+    }
+
+    // Função para verificar se o campo está vazio e aplicar a borda vermelha
+    public campoVazio(campo: keyof typeof this.paciente): boolean {
+        return this.camposVazios.includes(campo)
     }
 
     //mostrar mensagem alerta
