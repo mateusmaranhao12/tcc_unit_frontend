@@ -13,7 +13,7 @@
           <img :src="medico.imagem || require('@/assets/imgs/user-default.jpg')" alt="Foto do Médico"
             class="w-32 h-32 mx-auto rounded-full mb-4 object-cover border-2 border-gray-300">
 
-          <h2 class="text-xl font-semibold text-gray-800">{{ medico.nome }}</h2>
+          <h2 class="text-xl font-semibold text-gray-800">{{ medico.nome }} {{ medico.sobrenome }}</h2>
           <p class="text-gray-600">{{ formatarEspecialidade(medico.especialidade) }}</p>
         </div>
       </div>
@@ -32,20 +32,20 @@ import axios from 'axios';
   },
 })
 export default class Medicos extends Vue {
-  medicos: Array<{ nome: string, especialidade: string, imagem: string | null }> = []
+  medicos: Array<{ nome: string, sobrenome: string, especialidade: string, imagem: string | null }> = []
 
   async mounted() {
     try {
       const response = await axios.get('http://localhost/Projetos/tcc_unit/backend/api/medicos.php');
 
       if (response.data.success) {
-        this.medicos = response.data.medicos;
+        this.medicos = response.data.medicos
       } else {
-        console.error('Erro ao buscar médicos:', response.data.message);
+        console.error('Erro ao buscar médicos:', response.data.message)
       }
 
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      console.error('Erro na requisição:', error)
     }
   }
 
