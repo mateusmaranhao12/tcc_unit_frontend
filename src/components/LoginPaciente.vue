@@ -56,6 +56,7 @@ export default class LoginPaciente extends Vue {
         try {
             const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/login_paciente.php', this.loginPaciente)
             if (response.data.success) {
+                localStorage.setItem('userRole', 'paciente')
                 this.$router.push('/menu-paciente')
             } else {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', response.data.message, 'erro')

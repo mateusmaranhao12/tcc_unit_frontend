@@ -7,8 +7,22 @@ import Sobre from '@/views/Sobre.vue'
 import MenuMedico from '@/views/MenuMedico.vue'
 import MenuPaciente from '@/views/MenuPaciente.vue'
 
-const routes: Array<RouteRecordRaw> = [
+const isAuthenticatedMedico = () => {
+  return localStorage.getItem('userRole') === 'medico'
+}
 
+const isAuthenticatedPaciente = () => {
+  return localStorage.getItem('userRole') === 'paciente'
+}
+
+export const logout = () => {
+  console.log('fazer logout')
+  localStorage.removeItem('userRole')
+  localStorage.removeItem('authToken')
+  window.location.href = '/login'
+}
+
+const routes: Array<RouteRecordRaw> = [
   //index
   {
     path: '/',
@@ -44,20 +58,33 @@ const routes: Array<RouteRecordRaw> = [
     component: Login
   },
 
-  //Menu Medico
+  //Menu Medico - Protegido
   {
     path: '/menu-medico',
     name: 'menu-medico',
-    component: MenuMedico
+    component: MenuMedico,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticatedMedico()) {
+        next()
+      } else {
+        next('/login')
+      }
+    }
   },
 
-  //Menu Paciente
+  //Menu Paciente - Protegido
   {
     path: '/menu-paciente',
     name: 'menu-paciente',
-    component: MenuPaciente
+    component: MenuPaciente,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticatedPaciente()) {
+        next();
+      } else {
+        next('/login')
+      }
+    }
   }
-
 ]
 
 const router = createRouter({
