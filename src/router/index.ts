@@ -4,6 +4,8 @@ import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
 import Medicos from '@/views/Medicos.vue'
 import Sobre from '@/views/Sobre.vue'
+import MenuMedico from '@/views/MenuMedico.vue'
+import MenuPaciente from '@/views/MenuPaciente.vue'
 
 const routes: Array<RouteRecordRaw> = [
 
@@ -40,6 +42,20 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: Login
+  },
+
+  //Menu Medico
+  {
+    path: '/menu-medico',
+    name: 'menu-medico',
+    component: MenuMedico
+  },
+
+  //Menu Paciente
+  {
+    path: '/menu-paciente',
+    name: 'menu-paciente',
+    component: MenuPaciente
   }
 
 ]
