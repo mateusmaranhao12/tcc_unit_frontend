@@ -1,0 +1,72 @@
+@import 'variaveis';
+
+.btn-green-menu {
+    background-color: $green;
+    color: $white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $green_hover;
+    }
+}
+
+.btn-logout {
+    background-color: $white;
+    color: $green;
+    border: 1px solid green;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $green_hover;
+        color: $white;
+    }
+}
+
+.btn-ver {
+    background-color: rgb(0, 132, 255);
+    color: $white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: rgb(0, 56, 109);
+    }
+}
+
+.btn-reagendar {
+    background-color: rgb(255, 166, 0);
+    color: $white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: rgb(255, 123, 0);
+    }
+}
+
+.btn-desmarcar {
+    background-color: rgb(206, 0, 0);
+    color: $white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: rgb(116, 0, 0);
+    }
+}
