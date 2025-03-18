@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Cadastro from '@/views/Cadastro.vue'
+import ConsultasDoDia from '@/components/ConsultasDoDia.vue'
+import ConsultasFuturas from '@/components/ConsultasFuturas.vue'
 import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
 import Medicos from '@/views/Medicos.vue'
@@ -65,11 +67,23 @@ const routes: Array<RouteRecordRaw> = [
     component: MenuMedico,
     beforeEnter: (to, from, next) => {
       if (isAuthenticatedMedico()) {
-        next()
+        next();
       } else {
-        next('/login')
+        next('/login');
       }
-    }
+    },
+    children: [
+      {
+        path: 'consultas-do-dia',
+        name: 'consultas-do-dia',
+        component: ConsultasDoDia
+      },
+      {
+        path: 'consultas-futuras',
+        name: 'consultas-futuras',
+        component: ConsultasFuturas
+      }
+    ]
   },
 
   //Menu Paciente - Protegido

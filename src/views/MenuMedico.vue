@@ -11,20 +11,16 @@
         <div class="mt-4 space-y-4">
           <div class="bg-gray-200 p-4 rounded-lg flex justify-between items-center">
             <span>Consultas Futuras</span>
-            <button class="btn-ver">Ver</button>
+            <button class="btn-ver" @click="$router.push('/menu-medico/consultas-futuras')">Ver</button>
           </div>
 
           <div class="bg-gray-200 p-4 rounded-lg flex justify-between items-center">
             <span>Consultas do Dia</span>
-            <button class="btn-ver">Ver</button>
-          </div>
-
-          <div class="flex space-x-4 mt-4">
-            <button class="btn-reagendar">Re-agendar Consultas</button>
-            <button class="btn-desmarcar">Desmarcar Consultas</button>
+            <button class="btn-ver" @click="$router.push('/menu-medico/consultas-do-dia')">Ver</button>
           </div>
         </div>
       </div>
+      <router-view v-if="$route.name === 'consultas-do-dia' || $route.name === 'consultas-futuras'"></router-view>
     </div>
   </div>
 </template>

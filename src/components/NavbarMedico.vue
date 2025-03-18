@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import { logout } from '@/router'
 
 @Options({})
 export default class NavbarMedico extends Vue {
@@ -31,7 +32,7 @@ export default class NavbarMedico extends Vue {
 
     logout() {
         console.log("Logout realizado")
-        this.$router.push('/login')
+        logout()
     }
 }
 </script>
