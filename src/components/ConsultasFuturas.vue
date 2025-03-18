@@ -9,16 +9,16 @@
 
         <div v-if="consultas.length" class="space-y-4">
             <div v-for="consulta in consultas" :key="consulta.id"
-                class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-                <div>
+                class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="mb-2 md:mb-0 w-full md:w-auto">
                     <p class="text-lg font-semibold">{{ consulta.data }} - {{ consulta.horario }}</p>
                     <p class="text-gray-600">Paciente: {{ consulta.paciente }}</p>
                 </div>
-                <div class="flex space-x-2">
+                <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
                     <button @click="reagendarConsulta(consulta.id)"
-                        class="btn-reagendar"><i class="fa-solid fa-calendar-days"></i> Reagendar</button>
+                        class="btn-reagendar w-full md:w-auto"><i class="fa-solid fa-calendar-days"></i> Reagendar</button>
                     <button @click="desmarcarConsulta(consulta.id)"
-                        class="btn-desmarcar"><i class="fa-solid fa-xmark"></i> Desmarcar</button>
+                        class="btn-desmarcar w-full md:w-auto"><i class="fa-solid fa-xmark"></i> Desmarcar</button>
                 </div>
             </div>
         </div>

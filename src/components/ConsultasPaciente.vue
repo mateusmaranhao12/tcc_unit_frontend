@@ -1,7 +1,8 @@
 <template>
     <div class="mt-6 p-4 bg-white shadow-md rounded-lg relative">
         <!-- Botão para fechar a rota filha -->
-        <button @click="$router.push('/menu-paciente')" class="absolute top-4 right-4 text-red-500 text-xl cursor-pointer">
+        <button @click="$router.push('/menu-paciente')"
+            class="absolute top-4 right-4 text-red-500 text-xl cursor-pointer">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
@@ -9,20 +10,20 @@
 
         <div v-if="consultas.length" class="space-y-4">
             <div v-for="consulta in consultas" :key="consulta.id"
-                class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
-                <div>
+                class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="mb-2 md:mb-0 w-full md:w-auto">
                     <p class="text-lg font-semibold">{{ formatarData(consulta.data, consulta.horario) }}</p>
                     <p class="text-gray-600">Médico: {{ consulta.medico }}</p>
                 </div>
-                <div class="flex space-x-2">
+                <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
                     <button v-if="consulta.data.includes('Hoje')" @click="finalizarConsulta(consulta.id)"
-                        class="btn-finalizar">
+                        class="btn-finalizar w-full md:w-auto">
                         <i class="fa-solid fa-check"></i> Finalizar
                     </button>
-                    <button @click="reagendarConsulta(consulta.id)" class="btn-reagendar">
+                    <button @click="reagendarConsulta(consulta.id)" class="btn-reagendar w-full md:w-auto">
                         <i class="fa-solid fa-calendar-days"></i> Reagendar
                     </button>
-                    <button @click="desmarcarConsulta(consulta.id)" class="btn-desmarcar">
+                    <button @click="desmarcarConsulta(consulta.id)" class="btn-desmarcar w-full md:w-auto">
                         <i class="fa-solid fa-xmark"></i> Desmarcar
                     </button>
                 </div>
