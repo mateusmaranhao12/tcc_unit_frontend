@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Cadastro from '@/views/Cadastro.vue'
 import ConsultasDoDia from '@/components/ConsultasDoDia.vue'
 import ConsultasFuturas from '@/components/ConsultasFuturas.vue'
+import ConsultasPaciente from '@/components/ConsultasPaciente.vue'
 import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
 import Medicos from '@/views/Medicos.vue'
@@ -97,7 +98,14 @@ const routes: Array<RouteRecordRaw> = [
       } else {
         next('/login')
       }
-    }
+    },
+    children: [
+      {
+        path: 'consultas-paciente',
+        name: 'consultas-paciente',
+        component: ConsultasPaciente
+      }
+    ]
   }
 ]
 

@@ -11,15 +11,12 @@
         <div class="mt-4 space-y-4">
           <div class="bg-gray-200 p-4 rounded-lg flex justify-between items-center">
             <span>Lista de Todas as Consultas</span>
-            <button class="btn-ver">Ver</button>
-          </div>
-
-          <div class="flex space-x-4 mt-4">
-            <button class="btn-reagendar">Re-agendar Consulta</button>
-            <button class="btn-desmarcar">Cancelar Consulta</button>
+            <button class="btn-ver" @click="$router.push('/menu-paciente/consultas-paciente')">Ver</button>
           </div>
         </div>
       </div>
+
+      <router-view></router-view>
     </div>
   </div>
 </template>
