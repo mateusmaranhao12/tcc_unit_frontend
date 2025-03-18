@@ -8,7 +8,6 @@
 
             <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0">
                 <button @click="alterarInformacoes" class="btn-green-menu">Alterar dados do perfil</button>
-                <button @click="atualizarConvenio" class="btn-green-menu">Atualizar convênio</button>
                 <button @click="logout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i></button>
             </div>
         </div>
