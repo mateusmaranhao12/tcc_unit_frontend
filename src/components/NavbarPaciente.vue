@@ -21,11 +21,7 @@ import { logout } from '@/router'
 @Options({})
 export default class NavbarPaciente extends Vue {
     alterarInformacoes() {
-        this.$router.push('/alterar-informacoes-medico')
-    }
-
-    atualizarConvenio() {
-        this.$router.push('/atualizar-convenio')
+        this.$router.push('/alterar-dados-perfil-paciente')
     }
 
     logout() {

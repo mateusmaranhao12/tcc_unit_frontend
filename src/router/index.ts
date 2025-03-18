@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import AlterarDadosPerfilMedico from '@/views/AlterarDadosPerfilMedico.vue'
+import AlterarDadosPerfilPaciente from '@/views/AlterarDadosPerfilPaciente.vue'
 import Cadastro from '@/views/Cadastro.vue'
 import ConsultasDoDia from '@/components/ConsultasDoDia.vue'
 import ConsultasFuturas from '@/components/ConsultasFuturas.vue'
@@ -106,6 +108,34 @@ const routes: Array<RouteRecordRaw> = [
         component: ConsultasPaciente
       }
     ]
+  },
+
+  //Dados perfil medico
+  {
+    path: '/alterar-dados-perfil-medico',
+    name: 'alterar-dados-perfil-medico',
+    component: AlterarDadosPerfilMedico,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticatedMedico()) {
+        next();
+      } else {
+        next('/login');
+      }
+    }
+  },
+
+  //Dados perfil paciente
+  {
+    path: '/alterar-dados-perfil-paciente',
+    name: 'alterar-dados-perfil-paciente',
+    component: AlterarDadosPerfilPaciente,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticatedPaciente()) {
+        next();
+      } else {
+        next('/login')
+      }
+    }
   }
 ]
 

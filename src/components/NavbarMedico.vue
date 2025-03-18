@@ -22,11 +22,7 @@ import { logout } from '@/router'
 @Options({})
 export default class NavbarMedico extends Vue {
     alterarInformacoes() {
-        this.$router.push('/alterar-informacoes-medico')
-    }
-
-    alterarHorarios() {
-        this.$router.push('/alterar-horarios-medico')
+        this.$router.push('/alterar-dados-perfil-medico')
     }
 
     logout() {
