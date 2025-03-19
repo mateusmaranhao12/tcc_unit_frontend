@@ -1,6 +1,7 @@
 <template>
     <navbar-paciente />
     <div class="container mx-auto p-6">
+        <button class="back-menu" @click="voltarMenuInicial"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
         <h1 class="text-2xl font-bold text-gray-800 mb-4">Agendar Consulta</h1>
 
         <!-- Seleção da Especialidade -->
@@ -23,7 +24,12 @@
 
         <!-- Seleção do Horário -->
         <div v-if="medicoSelecionado" class="mb-4">
-            <label class="block text-gray-700 font-semibold mb-2">Escolha o horário:</label>
+            <!-- Escolha da data -->
+            <label class="block text-gray-700 font-semibold mb-2">Escolha uma data:</label>
+            <input type="date" v-model="dataSelecionada" class="input-field" :min="minDate" />
+
+            <!-- Escolha do horário -->
+            <label class="block text-gray-700 font-semibold mb-2 mt-4">Escolha o horário:</label>
             <select v-model="horarioSelecionado" class="input-field">
                 <option value="" disabled>Selecione um horário</option>
                 <option v-for="horario in medicoSelecionado.horarios" :key="horario" :value="horario">
@@ -31,6 +37,7 @@
                 </option>
             </select>
         </div>
+
 
         <!-- Botão de Agendar -->
         <button v-if="horarioSelecionado" class="btn-agendar" @click="agendarConsulta">
@@ -49,13 +56,18 @@ import NavbarPaciente from '@/components/NavbarPaciente.vue'
     }
 })
 export default class AgendarConsulta extends Vue {
-    // Dados estáticos
+
+    //data selecionada
+    dataSelecionada: string | null = null
+
+    //especialidades
     especialidades = [
         'Alergologia', 'Ortopedia', 'Cardiologia', 'Dermatologia', 'Gastroenterologia',
         'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
         'Oncologia', 'Pneumologia', 'Reumatologia', 'Pediatria'
     ]
 
+    //horario atendimento
     horariosAtendimento = [
         '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00', '10:00 - 11:00',
         '11:00 - 12:00', '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00',
@@ -123,6 +135,17 @@ export default class AgendarConsulta extends Vue {
     // Simula a confirmação do agendamento
     agendarConsulta() {
         console.log('consulta agendada')
+    }
+
+    //voltar ao menu inicial
+    public voltarMenuInicial() {
+        this.$router.push('/menu-paciente')
+    }
+
+    //data minima
+    get minDate() {
+        const today = new Date()
+        return today.toISOString().split('T')[0]
     }
 }
 </script>

@@ -91,7 +91,7 @@
                         <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                             <i class="fa-solid fa-calendar text-xl"></i>
                         </div>
-                        <input type="date" v-model="paciente.dataNascimento"
+                        <input :max="dataMaxima" type="date" v-model="paciente.dataNascimento"
                             class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
                     </div>
                 </div>
@@ -250,6 +250,9 @@ export default class AlterarDadosPerfilPaciente extends Vue {
     public voltarMenuInicial() {
         this.$router.push('/menu-paciente')
     }
+
+    //data maxima
+    dataMaxima: string = new Date().toISOString().split('T')[0]
 
 }
 
