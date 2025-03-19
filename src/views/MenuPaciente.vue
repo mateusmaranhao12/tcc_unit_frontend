@@ -17,6 +17,17 @@
       </div>
 
       <router-view></router-view>
+
+      <!-- Agendar Consulta -->
+      <div class="mt-6">
+
+        <div class="mt-4 space-y-4">
+          <div class="bg-gray-200 p-4 rounded-lg flex justify-between items-center">
+            <span>Agendar consulta</span>
+            <button class="btn-ver" @click="$router.push('/agendar-consulta')">Agendar</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

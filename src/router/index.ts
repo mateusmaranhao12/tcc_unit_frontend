@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import AgendarConsulta from '@/views/AgendarConsulta.vue'
 import AlterarDadosPerfilMedico from '@/views/AlterarDadosPerfilMedico.vue'
 import AlterarDadosPerfilPaciente from '@/views/AlterarDadosPerfilPaciente.vue'
 import Cadastro from '@/views/Cadastro.vue'
@@ -8,9 +9,9 @@ import ConsultasPaciente from '@/components/ConsultasPaciente.vue'
 import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
 import Medicos from '@/views/Medicos.vue'
-import Sobre from '@/views/Sobre.vue'
 import MenuMedico from '@/views/MenuMedico.vue'
 import MenuPaciente from '@/views/MenuPaciente.vue'
+import Sobre from '@/views/Sobre.vue'
 
 const isAuthenticatedMedico = () => {
   return localStorage.getItem('userRole') === 'medico'
@@ -129,6 +130,20 @@ const routes: Array<RouteRecordRaw> = [
     path: '/alterar-dados-perfil-paciente',
     name: 'alterar-dados-perfil-paciente',
     component: AlterarDadosPerfilPaciente,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticatedPaciente()) {
+        next();
+      } else {
+        next('/login')
+      }
+    }
+  },
+
+  //Agendar consulta
+  {
+    path: '/agendar-consulta',
+    name: 'agendar-consulta',
+    component: AgendarConsulta,
     beforeEnter: (to, from, next) => {
       if (isAuthenticatedPaciente()) {
         next();
