@@ -276,7 +276,7 @@ export default class CadastroMedico extends Vue {
     especialidades = [
         'Alergologia', 'Ortopedia', 'Cardiologia', 'Dermatologia', 'Gastroenterologia',
         'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
-        'Oncologia', 'Pneumologia', 'Reumatologia', 'Pediatria'
+        'Oncologia', 'Pediatria', 'Pneumologia', 'Psiquiatria', 'Reumatologia'
     ]
 
     horariosAtendimento = [

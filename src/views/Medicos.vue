@@ -49,33 +49,33 @@ export default class Medicos extends Vue {
     }
   }
 
-  // Função para converter especialidades terminadas em "ia" para "ista"
   // Função para converter especialidades terminadas em "ia" para "ista" ou "tra" (no caso das exceções)
   formatarEspecialidade(especialidade: string): string {
     const especialidades = [
       'Alergologia', 'Ortopedia', 'Cardiologia', 'Dermatologia', 'Gastroenterologia',
       'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
-      'Oncologia', 'Pneumologia', 'Reumatologia', 'Pediatria'
-    ];
+      'Oncologia', 'Pediatria', 'Pneumologia', 'Psiquiatria', 'Reumatologia'
+    ]
 
     // Mapeamento de exceções específicas
     const excecoes: Record<string, string> = {
       'Geriatria': 'Geriatra',
-      'Pediatria': 'Pediatra'
+      'Pediatria': 'Pediatra',
+      'Psiquiatria' : 'Psiquiatra'
     };
 
     // Se for uma exceção, retorna a conversão específica
     if (excecoes[especialidade]) {
-      return excecoes[especialidade];
+      return excecoes[especialidade]
     }
 
     // Converte "ia" para "ista" para as demais especialidades
     if (especialidades.includes(especialidade)) {
-      return especialidade.replace(/ia$/, 'ista');
+      return especialidade.replace(/ia$/, 'ista')
     }
 
     // Retorna o nome original caso não haja necessidade de conversão
-    return especialidade;
+    return especialidade
   }
 
 }
