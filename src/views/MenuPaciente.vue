@@ -2,7 +2,7 @@
   <navbar-paciente />
   <div class="min-h-screen bg-gray-100 p-6">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
-      <h1 class="text-2xl font-bold text-gray-800">Olá, Rodolfo José</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Olá, {{ nomeCompleto }}</h1>
 
       <!-- Seção de Consultas -->
       <div class="mt-6">
@@ -35,12 +35,30 @@
 <script lang="ts">
 import NavbarPaciente from '@/components/NavbarPaciente.vue'
 import { Options, Vue } from 'vue-class-component'
+import { Store } from 'vuex'
+
+interface WithStore {
+  $store: Store<any>
+}
 
 @Options({
   components: {
     NavbarPaciente
+  },
+  methods: {
+    carregarPaciente() {
+      return this.$store.dispatch('paciente/carregarPaciente')
+    }
+  },
+  async mounted() {
+    await this.carregarPaciente()
   }
 })
-export default class MenuPaciente extends Vue {
+export default class MenuPaciente extends Vue implements WithStore {
+  $store!: Store<any>
+
+  get nomeCompleto(): string {
+    return this.$store.getters['paciente/nomeCompleto']
+  }
 }
 </script>

@@ -180,7 +180,7 @@
             <div class="flex items-center space-x-4">
                 <!-- Círculo para a Pré-visualização da Imagem -->
                 <div v-if="paciente.imagem" class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">
-                    <img :src="paciente.imagem" alt="Foto de Perfil" class="w-full h-full object-cover">
+                    <img v-if="previewImagem" :src="previewImagem" class="w-20 h-20 rounded-full" />
                 </div>
 
                 <!-- Input de Upload de Imagem -->
@@ -251,6 +251,9 @@ export default class CadastroPaciente extends Vue {
         'genero',
         'convenio'
     ]
+
+    //preview da imagem
+    public previewImagem: string | null = null
 
     // Cadastrar paciente
     async cadastrarPaciente() {
@@ -344,10 +347,21 @@ export default class CadastroPaciente extends Vue {
 
     // Upload de Imagem e Atualização do Preview
     public uploadImagem(event: Event) {
-        const file = (event.target as HTMLInputElement).files?.[0];
-        if (file) {
-            this.paciente.imagem = URL.createObjectURL(file);
+        const file = (event.target as HTMLInputElement).files?.[0]
+        if (!file) return
+
+        const reader = new FileReader()
+        reader.onload = () => {
+            const base64String = reader.result as string
+
+            // Exibe a imagem no navegador (preview)
+            this.previewImagem = base64String
+
+            // Envia só a parte útil do base64 para o backend (sem o prefixo data:image/png;base64,...)
+            this.paciente.imagem = base64String.split(',')[1]
         }
+
+        reader.readAsDataURL(file)
     }
 
     // Validação de imagem (somente png, svg, jpg, jpeg)

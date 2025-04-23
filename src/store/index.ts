@@ -1,5 +1,7 @@
 import { createStore } from 'vuex'
 import medico from './modules/medico'
+import paciente from './modules/paciente'
+
 
 export default createStore({
   state: {
@@ -11,6 +13,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    medico
+    medico,
+    paciente
   }
 })
