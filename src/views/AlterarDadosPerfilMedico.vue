@@ -256,14 +256,14 @@ export default class AlterarDadosMedico extends Vue {
             axios.get(`http://localhost/Projetos/tcc_unit/backend/api/perfil_medico.php?email=${email}`)
                 .then(response => {
                     if (response.data.success) {
-                        this.medico = response.data.medico;
+                        this.medico = response.data.medico
                     } else {
-                        console.warn(response.data.message);
+                        console.warn(response.data.message)
                     }
                 })
                 .catch(err => {
-                    console.error('Erro ao buscar dados do médico:', err);
-                });
+                    console.error('Erro ao buscar dados do médico:', err)
+                })
         }
     }
 
@@ -278,9 +278,9 @@ export default class AlterarDadosMedico extends Vue {
 
     // Upload de Imagem e Atualização do Preview
     public uploadImagem(event: Event) {
-        const file = (event.target as HTMLInputElement).files?.[0];
+        const file = (event.target as HTMLInputElement).files?.[0]
         if (file) {
-            this.medico.imagem = URL.createObjectURL(file);
+            this.medico.imagem = URL.createObjectURL(file)
         }
     }
 

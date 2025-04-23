@@ -204,7 +204,7 @@ export default class AlterarDadosPerfilPaciente extends Vue {
 
     //obter dados do paciente
     mounted() {
-        const email = localStorage.getItem('pacienteEmail');
+        const email = localStorage.getItem('pacienteEmail')
         if (email) {
             axios.get(`http://localhost/Projetos/tcc_unit/backend/api/perfil_paciente.php?email=${email}`)
                 .then(response => {
@@ -215,8 +215,8 @@ export default class AlterarDadosPerfilPaciente extends Vue {
                     }
                 })
                 .catch(err => {
-                    console.error('Erro ao buscar dados do paciente:', err);
-                });
+                    console.error('Erro ao buscar dados do paciente:', err)
+                })
         }
     }
 
