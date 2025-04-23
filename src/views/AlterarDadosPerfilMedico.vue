@@ -1,8 +1,8 @@
 <template>
-    <NavbarMedico />
     <div class="min-h-screen bg-gray-100 p-6">
         <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
-            <button class="back-menu" @click="voltarMenuInicial"><i class="fa-solid fa-chevron-left"></i> Voltar ao menu inicial</button>
+            <button class="back-menu" @click="voltarMenuInicial"><i class="fa-solid fa-chevron-left"></i> Voltar ao menu
+                inicial</button>
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Editar perfil</h2>
 
             <form @submit.prevent="salvarAlteracoes" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -43,29 +43,6 @@
                         <input type="text" v-model="medico.email" placeholder="E-mail"
                             class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
                     </div>
-                </div>
-
-                <!-- Senha -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span
-                            class="text-red-800">*</span></label>
-                    <div class="relative flex items-center">
-                        <!-- Ícone do Cadeado -->
-                        <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
-                            <i class="fa-solid fa-lock text-xl"></i>
-                        </div>
-
-                        <!-- Input de Senha -->
-                        <input :type="senhaVisivel ? 'text' : 'password'" v-model="medico.senha"
-                            class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
-
-                        <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
-                        <button type="button" @click="toggleSenha"
-                            class="absolute right-2 cursor-pointer text-green-600 hover:text-green-800 focus:outline-none">
-                            <i :class="senhaVisivel ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
-                        </button>
-                    </div>
-
                 </div>
 
                 <!-- Genero -->
@@ -142,7 +119,7 @@
                 </div>
 
                 <!--CPF-->
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">CPF <span
                             class="text-red-800">*</span></label>
                     <div class="relative flex items-center h-10 w-full">
@@ -228,30 +205,34 @@
 </template>
 
 <script lang="ts">
-import NavbarMedico from '@/components/NavbarMedico.vue';
+import axios from 'axios';
 import { Options, Vue } from 'vue-class-component';
+import { mask } from 'vue-the-mask'
 
 @Options({
     components: {
-        NavbarMedico
+    },
+
+    directives: {
+        mask
     }
 })
 export default class AlterarDadosMedico extends Vue {
     medico = {
-        nome: 'Mateus',
-        sobrenome: 'Maranhão',
-        email: 'mateusnmaranhao@gmail.com',
-        senha: '12345',
-        dataNascimento: '2003-05-27',
-        genero: 'Masculino',
-        crm: '123456',
-        especialidade: 'Cardiologia',
-        telefone: '(79) 99176-2846',
-        cpf: '093.703.165-82',
-        endereco: 'Rua 6',
-        horarios: ['07:00 - 08:00', '14:00 - 15:00'],
-        valorConsulta: '150,00',
-        imagem: require('@/assets/imgs/user1.png')
+        nome: '',
+        sobrenome: '',
+        email: '',
+        senha: '',
+        dataNascimento: '',
+        genero: '',
+        crm: '',
+        especialidade: '',
+        telefone: '',
+        cpf: '',
+        endereco: '',
+        horarios: '',
+        valorConsulta: '',
+        imagem: ''
     }
 
     especialidades = [
@@ -267,6 +248,24 @@ export default class AlterarDadosMedico extends Vue {
     ]
 
     senhaVisivel = false
+
+    //obter dados do medico
+    mounted() {
+        const email = localStorage.getItem('medicoEmail');
+        if (email) {
+            axios.get(`http://localhost/Projetos/tcc_unit/backend/api/perfil_medico.php?email=${email}`)
+                .then(response => {
+                    if (response.data.success) {
+                        this.medico = response.data.medico;
+                    } else {
+                        console.warn(response.data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Erro ao buscar dados do médico:', err);
+                });
+        }
+    }
 
     toggleSenha() {
         this.senhaVisivel = !this.senhaVisivel

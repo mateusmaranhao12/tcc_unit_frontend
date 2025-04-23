@@ -1,5 +1,4 @@
 <template>
-    <NavbarPaciente />
     <div class="min-h-screen bg-gray-100 p-6">
         <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
             <button class="back-menu" @click="voltarMenuInicial"><i class="fa-solid fa-chevron-left"></i> Voltar ao menu
@@ -47,29 +46,6 @@
                     </div>
                 </div>
 
-                <!-- Senha -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha <span
-                            class="text-red-800">*</span></label>
-                    <div class="relative flex items-center">
-                        <!-- Ícone do Cadeado -->
-                        <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
-                            <i class="fa-solid fa-lock text-xl"></i>
-                        </div>
-
-                        <!-- Input de Senha -->
-                        <input :type="senhaVisivel ? 'text' : 'password'" v-model="paciente.senha" placeholder="Senha"
-                            class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
-
-                        <!-- Ícone de Olho para Mostrar/Ocultar Senha -->
-                        <button type="button" @click="toggleSenha"
-                            class="absolute right-2 cursor-pointer text-green-600 hover:text-green-800 focus:outline-none">
-                            <i :class="senhaVisivel ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
-                        </button>
-                    </div>
-
-                </div>
-
                 <!--Telefone-->
                 <div class="col-span-2 md:col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span
@@ -84,7 +60,7 @@
                 </div>
 
                 <!-- Data de Nascimento -->
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span
                             class="text-red-800">*</span></label>
                     <div class="relative flex items-center h-10 w-full">
@@ -194,34 +170,55 @@
 </template>
 
 <script lang="ts">
-import NavbarPaciente from '@/components/NavbarPaciente.vue';
-import { Options, Vue } from 'vue-class-component';
+import axios from 'axios'
+import { Options, Vue } from 'vue-class-component'
+import { mask } from 'vue-the-mask'
 
 @Options({
     components: {
-        NavbarPaciente
+    },
+
+    directives: {
+        mask
     }
 })
 
 export default class AlterarDadosPerfilPaciente extends Vue {
 
     paciente = {
-        nome: 'Rodolfo',
-        sobrenome: 'Barreto',
-        email: 'rodolfo@gmail.com',
-        senha: '12345',
-        dataNascimento: '2008-09-18',
-        cpf: '123.123.435-82',
-        endereco: 'Siqueira Campos, 123',
-        telefone: '(12) 99843-0192',
-        genero: 'Masculino',
-        convenio: 'Particular',
-        historico: 'lorem ipsum',
-        imagem: require('../assets/imgs/user-default.jpg')
+        nome: '',
+        sobrenome: '',
+        email: '',
+        dataNascimento: '',
+        cpf: '',
+        endereco: '',
+        telefone: '',
+        genero: '',
+        convenio: '',
+        historico: '',
+        imagem: ''
     }
 
     //exibicao de senha
     senhaVisivel = false
+
+    //obter dados do paciente
+    mounted() {
+        const email = localStorage.getItem('pacienteEmail');
+        if (email) {
+            axios.get(`http://localhost/Projetos/tcc_unit/backend/api/perfil_paciente.php?email=${email}`)
+                .then(response => {
+                    if (response.data.success) {
+                        this.paciente = response.data.paciente
+                    } else {
+                        console.warn(response.data.message)
+                    }
+                })
+                .catch(err => {
+                    console.error('Erro ao buscar dados do paciente:', err);
+                });
+        }
+    }
 
     toggleSenha() {
         this.senhaVisivel = !this.senhaVisivel
@@ -240,9 +237,9 @@ export default class AlterarDadosPerfilPaciente extends Vue {
 
     // Upload de Imagem e Atualização do Preview
     public uploadImagem(event: Event) {
-        const file = (event.target as HTMLInputElement).files?.[0];
+        const file = (event.target as HTMLInputElement).files?.[0]
         if (file) {
-            this.paciente.imagem = URL.createObjectURL(file);
+            this.paciente.imagem = URL.createObjectURL(file)
         }
     }
 
