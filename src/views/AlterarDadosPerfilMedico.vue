@@ -238,7 +238,7 @@ export default class AlterarDadosMedico extends Vue {
     especialidades = [
         'Alergologia', 'Ortopedia', 'Cardiologia', 'Dermatologia', 'Gastroenterologia',
         'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
-        'Oncologia', 'Pneumologia', 'Reumatologia', 'Pediatria'
+        'Oncologia', 'Pneumologia', 'Pediatria', 'Psiquiatria', 'Reumatologia'
     ]
 
     horariosAtendimento = [
