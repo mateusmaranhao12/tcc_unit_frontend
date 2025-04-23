@@ -2,8 +2,9 @@
     <nav class="bg-white text-green-500 p-4 shadow-md">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-3">
-                <img src="../assets/imgs/user1.png" alt="Perfil" class="w-10 h-10 rounded-full border border-gray-300" />
-                <h1 class="text-xl font-bold">Mateus</h1>
+                <img :src="imagemPerfil" alt="Perfil"
+                    class="w-10 h-10 rounded-full border border-gray-300 object-cover" />
+                <h1 class="text-xl font-bold">{{ nomeCompleto }}</h1>
             </div>
 
             <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0">
@@ -16,11 +17,18 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component'
 import { logout } from '@/router'
+import { Store } from 'vuex'
+
+interface WithStore {
+    $store: Store<any>
+}
 
 @Options({})
-export default class NavbarMedico extends Vue {
+export default class NavbarMedico extends Vue implements WithStore {
+    $store!: Store<any> // adiciona tipagem da store
+
     alterarInformacoes() {
         this.$router.push('/alterar-dados-perfil-medico')
     }
@@ -28,6 +36,14 @@ export default class NavbarMedico extends Vue {
     logout() {
         console.log("Logout realizado")
         logout()
+    }
+
+    get nomeCompleto(): string {
+        return this.$store.getters['medico/nomeCompleto']
+    }
+
+    get imagemPerfil(): string {
+        return this.$store.getters['medico/imagemPerfil']
     }
 }
 </script>

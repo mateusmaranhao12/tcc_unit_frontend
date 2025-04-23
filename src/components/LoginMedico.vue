@@ -71,6 +71,7 @@ export default class LoginMedico extends Vue {
             const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/login_medico.php', this.loginMedico)
             if (response.data.success) {
                 localStorage.setItem('userRole', 'medico')
+                localStorage.setItem('medicoEmail', this.loginMedico.email)
                 this.$router.push('/menu-medico')
             } else {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', response.data.message, 'erro')
