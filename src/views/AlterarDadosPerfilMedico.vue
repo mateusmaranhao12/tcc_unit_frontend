@@ -5,7 +5,15 @@
                 inicial</button>
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Editar perfil</h2>
 
+            <!-- Alerta -->
+            <div v-if="mensagem_alerta" :class="estiloAlerta"
+                class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+                <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
+                <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
+            </div>
+
             <form @submit.prevent="salvarAlteracoes" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
                 <!-- Nome -->
                 <div class="col-span-2 md:col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nome <span
@@ -28,19 +36,6 @@
                             <i class="fa-solid fa-user text-xl"></i>
                         </div>
                         <input type="text" v-model="medico.sobrenome" placeholder="Sobrenome"
-                            class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
-                    </div>
-                </div>
-
-                <!-- Email -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span
-                            class="text-red-800">*</span></label>
-                    <div class="relative flex items-center">
-                        <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
-                            <i class="fa-solid fa-envelope text-xl"></i>
-                        </div>
-                        <input type="text" v-model="medico.email" placeholder="E-mail"
                             class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
                     </div>
                 </div>
@@ -106,7 +101,7 @@
                 </div>
 
                 <!-- Data de Nascimento -->
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span
                             class="text-red-800">*</span></label>
                     <div class="relative flex items-center h-10 w-full">
@@ -184,8 +179,10 @@
                             class="text-red-800">*</span></label>
                     <div class="flex items-center space-x-4">
                         <!-- Círculo para a Imagem de Perfil -->
-                        <img :src="medico.imagem" alt="Foto de Perfil"
-                            class="w-16 h-16 rounded-full border-2 border-gray-300 object-cover" />
+                        <div v-if="medico.imagem"
+                            class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">
+                            <img :src="previewImagem || require('@/assets/imgs/user-default.jpg')" />
+                        </div>
 
                         <!-- Input de Upload de Imagem -->
                         <input ref="inputImagem" style="cursor: pointer;" type="file" @change="uploadImagem"
@@ -221,8 +218,6 @@ export default class AlterarDadosMedico extends Vue {
     medico = {
         nome: '',
         sobrenome: '',
-        email: '',
-        senha: '',
         dataNascimento: '',
         genero: '',
         crm: '',
@@ -230,7 +225,7 @@ export default class AlterarDadosMedico extends Vue {
         telefone: '',
         cpf: '',
         endereco: '',
-        horarios: '',
+        horarios: [] as string[],
         valorConsulta: '',
         imagem: ''
     }
@@ -247,7 +242,11 @@ export default class AlterarDadosMedico extends Vue {
         '16:00 - 17:00', '17:00 - 18:00'
     ]
 
-    senhaVisivel = false
+    //preview da imagem
+    previewImagem = ''
+
+    // Alerta
+    mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
 
     //obter dados do medico
     mounted() {
@@ -256,7 +255,25 @@ export default class AlterarDadosMedico extends Vue {
             axios.get(`http://localhost/Projetos/tcc_unit/backend/api/perfil_medico.php?email=${email}`)
                 .then(response => {
                     if (response.data.success) {
-                        this.medico = response.data.medico
+                        const medico = response.data.medico
+
+                        if (typeof medico.horarios === 'string') {
+                            try {
+                                medico.horarios = JSON.parse(medico.horarios)
+                            } catch {
+                                medico.horarios = []
+                            }
+                        }
+
+                        // Garante imagem com prefixo correto
+                        if (medico.imagem) {
+                            const imgLimpa = medico.imagem.replace(/^data:image\/[a-z]+;base64,/, '')
+                            this.previewImagem = `data:image/jpeg;base64,${imgLimpa}`
+                        } else {
+                            this.previewImagem = ''
+                        }
+
+                        this.medico = medico
                     } else {
                         console.warn(response.data.message)
                     }
@@ -267,20 +284,54 @@ export default class AlterarDadosMedico extends Vue {
         }
     }
 
-    toggleSenha() {
-        this.senhaVisivel = !this.senhaVisivel
-    }
-
     //salvar alteracoes
-    salvarAlteracoes() {
-        console.log("Alterações salvas:", this.medico)
+    async salvarAlteracoes() {
+        try {
+            const medicoParaSalvar = { ...this.medico }
+
+            // Trata a imagem: remove prefixo se necessário
+            if (this.previewImagem) {
+                medicoParaSalvar.imagem = this.previewImagem.split(',')[1]
+            } else if (this.medico.imagem?.startsWith('data:image/')) {
+                medicoParaSalvar.imagem = this.medico.imagem.split(',')[1]
+            }
+
+            const response = await axios.post(
+                'http://localhost/Projetos/tcc_unit/backend/api/atualizar_medico.php',
+                medicoParaSalvar
+            )
+
+            if (response.data.success) {
+                this.mostrarMensagemAlerta('fa-solid fa-check', 'Dados atualizados com sucesso!', 'sucesso')
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', response.data.message, 'erro')
+            }
+        } catch (error) {
+            console.error('Erro ao salvar alterações:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao salvar alterações.', 'erro')
+        }
     }
 
     // Upload de Imagem e Atualização do Preview
     public uploadImagem(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0]
         if (file) {
-            this.medico.imagem = URL.createObjectURL(file)
+            const reader = new FileReader()
+
+            reader.onload = () => {
+                const result = reader.result as string
+
+                // Remove prefixo caso já tenha
+                const base64Limpo = result.replace(/^data:image\/[a-z]+;base64,/, '')
+
+                // Define o preview com prefixo correto
+                this.previewImagem = `data:image/jpeg;base64,${base64Limpo}`
+
+                // Envio ao backend: apenas o base64 puro
+                this.medico.imagem = base64Limpo
+            }
+
+            reader.readAsDataURL(file)
         }
     }
 
@@ -291,6 +342,21 @@ export default class AlterarDadosMedico extends Vue {
 
     //data maxima
     dataMaxima: string = new Date().toISOString().split('T')[0]
+
+    //mostrar mensagem alerta
+    private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
+        this.mensagem_alerta = { icone, mensagem, status }
+        setTimeout(() => {
+            this.mensagem_alerta = null
+        }, 5000)
+    }
+
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.mensagem_alerta?.status === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500';
+    }
 }
 </script>
 

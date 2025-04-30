@@ -185,7 +185,6 @@ export default class AlterarDadosPerfilPaciente extends Vue {
     paciente = {
         nome: '',
         sobrenome: '',
-        email: '',
         dataNascimento: '',
         cpf: '',
         endereco: '',
@@ -195,9 +194,6 @@ export default class AlterarDadosPerfilPaciente extends Vue {
         historico: '',
         imagem: ''
     }
-
-    //exibicao de senha
-    senhaVisivel = false
 
     //preview da imagem
     previewImagem = ''
@@ -221,11 +217,6 @@ export default class AlterarDadosPerfilPaciente extends Vue {
                     console.error('Erro ao buscar dados do paciente:', err)
                 })
         }
-    }
-
-    //mostrar senha
-    toggleSenha() {
-        this.senhaVisivel = !this.senhaVisivel
     }
 
     // salvarAlteracoes
