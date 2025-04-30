@@ -1,6 +1,16 @@
 <template>
     <div class="min-h-screen bg-gray-100 p-6">
+        
+        <!--Formulario-->
         <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+
+            <!-- Alerta -->
+            <div v-if="mensagem_alerta" :class="estiloAlerta"
+                class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+                <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
+                <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
+            </div>
+
             <button class="back-menu" @click="voltarMenuInicial"><i class="fa-solid fa-chevron-left"></i> Voltar ao menu
                 inicial</button>
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Editar perfil</h2>
@@ -33,21 +43,8 @@
                     </div>
                 </div>
 
-                <!-- Email -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">E-mail <span
-                            class="text-red-800">*</span></label>
-                    <div class="relative flex items-center">
-                        <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-10">
-                            <i class="fa-solid fa-envelope text-xl"></i>
-                        </div>
-                        <input type="text" v-model="paciente.email" placeholder="E-mail"
-                            class="input-field input-half rounded-l-none border border-gray-300 px-4 py-2 w-full focus:ring-2 focus:ring-green-500 focus:outline-none h-full">
-                    </div>
-                </div>
-
                 <!--Telefone-->
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Telefone <span
                             class="text-red-800">*</span></label>
                     <div class="relative flex items-center h-10 w-full">
@@ -150,7 +147,7 @@
                         <!-- Círculo para a Pré-visualização da Imagem -->
                         <div v-if="paciente.imagem"
                             class="w-16 h-16 rounded-full border-2 border-gray-300 overflow-hidden">
-                            <img :src="paciente.imagem" alt="Foto de Perfil" class="w-full h-full object-cover">
+                            <img :src="previewImagem || paciente.imagem || require('@/assets/imgs/user-default.jpg')" />
                         </div>
 
                         <!-- Input de Upload de Imagem -->
@@ -202,6 +199,12 @@ export default class AlterarDadosPerfilPaciente extends Vue {
     //exibicao de senha
     senhaVisivel = false
 
+    //preview da imagem
+    previewImagem = ''
+
+    // Alerta
+    mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
+
     //obter dados do paciente
     mounted() {
         const email = localStorage.getItem('pacienteEmail')
@@ -220,13 +223,39 @@ export default class AlterarDadosPerfilPaciente extends Vue {
         }
     }
 
+    //mostrar senha
     toggleSenha() {
         this.senhaVisivel = !this.senhaVisivel
     }
 
-    //salvar alteracoes
-    salvarAlteracoes() {
-        console.log("Alterações salvas:", this.paciente)
+    // salvarAlteracoes
+    async salvarAlteracoes() {
+        try {
+            const pacienteParaSalvar = { ...this.paciente }
+
+            // Se houve novo upload, usa o preview (que tem o prefixo) e remove ele
+            if (this.previewImagem) {
+                pacienteParaSalvar.imagem = this.previewImagem.split(',')[1]
+            }
+            // Caso contrário, remove o prefixo se ele estiver presente no dado que veio do backend
+            else if (this.paciente.imagem?.startsWith('data:image/')) {
+                pacienteParaSalvar.imagem = this.paciente.imagem.split(',')[1]
+            }
+
+            const response = await axios.post(
+                'http://localhost/Projetos/tcc_unit/backend/api/atualizar_paciente.php',
+                pacienteParaSalvar
+            )
+
+            if (response.data.success) {
+                this.mostrarMensagemAlerta('fa-solid fa-check', 'Dados atualizados com sucesso!', 'sucesso')
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao atualizar: ' + response.data.message, 'erro')
+            }
+        } catch (error) {
+            console.error('Erro ao salvar alterações:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao salvar alterações.', 'erro')
+        }
     }
 
     // Lista de convênios
@@ -239,7 +268,19 @@ export default class AlterarDadosPerfilPaciente extends Vue {
     public uploadImagem(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0]
         if (file) {
-            this.paciente.imagem = URL.createObjectURL(file)
+            const reader = new FileReader()
+
+            reader.onload = () => {
+                const base64String = reader.result as string
+
+                // Exibição: com prefixo
+                this.previewImagem = base64String
+
+                // Envio: só o conteúdo base64
+                this.paciente.imagem = base64String.split(',')[1]
+            }
+
+            reader.readAsDataURL(file)
         }
     }
 
@@ -250,6 +291,21 @@ export default class AlterarDadosPerfilPaciente extends Vue {
 
     //data maxima
     dataMaxima: string = new Date().toISOString().split('T')[0]
+
+    //mostrar mensagem alerta
+    private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
+        this.mensagem_alerta = { icone, mensagem, status }
+        setTimeout(() => {
+            this.mensagem_alerta = null
+        }, 5000)
+    }
+
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.mensagem_alerta?.status === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500';
+    }
 
 }
 
