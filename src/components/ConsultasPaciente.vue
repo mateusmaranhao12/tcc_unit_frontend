@@ -53,11 +53,16 @@ export default class ConsultasPaciente extends Vue {
 
             if (response.data.success) {
                 const hojeStr = new Date().toISOString().split('T')[0]
+
                 this.consultas = response.data.consultas.map((c: any) => {
+
+                    const dataOriginal = c.data_consulta
+                    const horarioFormatado = c.horario_consulta.replace(' - ', ' às ')
+
                     return {
                         ...c,
-                        data: c.data_consulta === hojeStr ? 'Hoje' : c.data_consulta,
-                        horario: c.horario_consulta,
+                        data: dataOriginal === hojeStr ? 'Hoje' : dataOriginal,
+                        horario: horarioFormatado,
                         medico: `${c.nome_medico} ${c.sobrenome_medico}`
                     }
                 })
@@ -69,11 +74,11 @@ export default class ConsultasPaciente extends Vue {
 
     formatarData(data: string, horario: string): string {
         if (data === 'Hoje') {
-            return `Hoje às ${horario}`
+            return `Hoje das ${horario}`
         }
 
         const [ano, mes, dia] = data.split('-')
-        return `${dia}/${mes}/${ano} às ${horario}`
+        return `${dia}/${mes}/${ano} das ${horario}`
     }
 
     finalizarConsulta(id: number) {

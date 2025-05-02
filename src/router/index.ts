@@ -3,7 +3,6 @@ import AgendarConsulta from '@/views/AgendarConsulta.vue'
 import AlterarDadosPerfilMedico from '@/views/AlterarDadosPerfilMedico.vue'
 import AlterarDadosPerfilPaciente from '@/views/AlterarDadosPerfilPaciente.vue'
 import Cadastro from '@/views/Cadastro.vue'
-import ConsultasDoDia from '@/components/ConsultasDoDia.vue'
 import ConsultasFuturas from '@/components/ConsultasFuturas.vue'
 import ConsultasPaciente from '@/components/ConsultasPaciente.vue'
 import Index from '../views/Index.vue'
@@ -77,11 +76,6 @@ const routes: Array<RouteRecordRaw> = [
       }
     },
     children: [
-      {
-        path: 'consultas-do-dia',
-        name: 'consultas-do-dia',
-        component: ConsultasDoDia
-      },
       {
         path: 'consultas-futuras',
         name: 'consultas-futuras',
