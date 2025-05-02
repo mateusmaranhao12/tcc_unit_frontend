@@ -17,9 +17,15 @@
         <div v-if="especialidadeSelecionada" class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Escolha o médico:</label>
             <select v-model="medicoSelecionado" class="input-field">
-                <option value="" disabled>Selecione um médico</option>
-                <option v-for="med in medicosDisponiveis" :key="med.nome" :value="med">{{ med.nome }} {{ med.sobrenome
-                }}</option>
+                <template v-if="medicosDisponiveis.length">
+                    <option value="" disabled>Selecione um médico</option>
+                    <option v-for="med in medicosDisponiveis" :key="med.nome" :value="med">{{ med.nome }} {{
+                        med.sobrenome
+                        }}</option>
+                </template>
+
+                <!-- Caso não haja médicos -->
+                <option v-else disabled>Nenhum médico cadastrado com essa especialidade</option>
             </select>
         </div>
 
