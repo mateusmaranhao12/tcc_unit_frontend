@@ -161,15 +161,19 @@ export default class AgendarConsulta extends Vue {
         const emailPaciente = localStorage.getItem('pacienteEmail')
 
         const hoje = new Date()
-        const dataSelecionada = new Date(this.dataSelecionada ?? '')
+        const dataSelecionada = new Date(this.dataSelecionada + 'T' + this.horarioSelecionado.split(' - ')[0] + ':00')
 
         if (!emailPaciente || !this.dataSelecionada || !this.horarioSelecionado || !this.medicoSelecionado) {
             this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Por favor, preencha todos os campos para agendar a consulta.', 'erro')
             return
         }
 
-        if (isNaN(dataSelecionada.getTime()) || dataSelecionada.getTime() < hoje.setHours(0, 0, 0, 0)) {
-            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Por favor, selecione uma data válida a partir de hoje.', 'erro')
+        if (isNaN(dataSelecionada.getTime()) || dataSelecionada.getTime() <= hoje.getTime()) {
+            this.mostrarMensagemAlerta(
+                'fa-solid fa-circle-xmark',
+                'Selecione uma data e horário válidos a partir do momento atual.',
+                'erro'
+            )
             return
         }
 

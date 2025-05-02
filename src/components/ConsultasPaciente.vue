@@ -35,17 +35,45 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component'
+import axios from 'axios'
 
 @Options({})
 export default class ConsultasPaciente extends Vue {
-    consultas = [
-        { id: 1, data: 'Hoje', horario: '14:00', medico: 'Dr. João Silva' },
-        { id: 2, data: '2025-03-22', horario: '16:30', medico: 'Dra. Maria Oliveira' }
-    ]
+    consultas: any[] = []
+
+    async mounted() {
+        const emailPaciente = localStorage.getItem('pacienteEmail')
+        if (!emailPaciente) return
+
+        try {
+            const response = await axios.get('http://localhost/Projetos/tcc_unit/backend/api/listar_consultas_paciente.php', {
+                params: { email: emailPaciente }
+            })
+
+            if (response.data.success) {
+                const hojeStr = new Date().toISOString().split('T')[0]
+                this.consultas = response.data.consultas.map((c: any) => {
+                    return {
+                        ...c,
+                        data: c.data_consulta === hojeStr ? 'Hoje' : c.data_consulta,
+                        horario: c.horario_consulta,
+                        medico: `${c.nome_medico} ${c.sobrenome_medico}`
+                    }
+                })
+            }
+        } catch (error) {
+            console.error('Erro ao buscar consultas:', error)
+        }
+    }
 
     formatarData(data: string, horario: string): string {
-        return data === 'Hoje' ? `Hoje às ${horario}` : `${data} às ${horario}`
+        if (data === 'Hoje') {
+            return `Hoje às ${horario}`
+        }
+
+        const [ano, mes, dia] = data.split('-')
+        return `${dia}/${mes}/${ano} às ${horario}`
     }
 
     finalizarConsulta(id: number) {
