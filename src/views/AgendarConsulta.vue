@@ -16,9 +16,10 @@
         <!-- Seleção do Médico -->
         <div v-if="especialidadeSelecionada" class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Escolha o médico:</label>
-            <select v-model="medicoSelecionado" class="input-field" @change="mostrarHorarios">
+            <select v-model="medicoSelecionado" class="input-field">
                 <option value="" disabled>Selecione um médico</option>
-                <option v-for="med in medicosDisponiveis" :key="med.nome" :value="med">{{ med.nome }}</option>
+                <option v-for="med in medicosDisponiveis" :key="med.nome" :value="med">{{ med.nome }} {{ med.sobrenome
+                }}</option>
             </select>
         </div>
 
@@ -49,22 +50,63 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
 import NavbarPaciente from '@/components/NavbarPaciente.vue'
+import axios from 'axios'
+import { Store } from 'vuex'
+
+interface WithStore {
+    $store: Store<any>
+}
 
 @Options({
     components: {
         NavbarPaciente
+    },
+
+    methods: {
+        carregarPaciente() {
+            return this.$store.dispatch('paciente/carregarPaciente')
+        }
+    },
+
+    async mounted() {
+        await this.carregarPaciente()
+        this.carregarMedicos()
     }
 })
 export default class AgendarConsulta extends Vue {
 
+    $store!: Store<any>
+
+    // Variáveis de estado
+    especialidadeSelecionada = ''
+    medicoSelecionado: any = null
+    horarioSelecionado = ''
+
     //data selecionada
     dataSelecionada: string | null = null
 
+    medicosDisponiveis: any[] = []
+
+    // Lista de médicos simulada
+    medicos: any[] = []
+
     //especialidades
     especialidades = [
-        'Alergologia', 'Ortopedia', 'Cardiologia', 'Dermatologia', 'Gastroenterologia',
-        'Geriatria', 'Hematologia', 'Infectologia', 'Nefrologia', 'Neurologia',
-        'Oncologia', 'Pneumologia', 'Reumatologia', 'Pediatria'
+        'Alergologia',
+        'Ortopedia',
+        'Cardiologia',
+        'Dermatologia',
+        'Gastroenterologia',
+        'Geriatria',
+        'Hematologia',
+        'Infectologia',
+        'Nefrologia',
+        'Neurologia',
+        'Oncologia',
+        'Pediatria',
+        'Pneumologia',
+        'Psiquiatria',
+        'Reumatologia',
     ]
 
     //horario atendimento
@@ -74,56 +116,29 @@ export default class AgendarConsulta extends Vue {
         '16:00 - 17:00', '17:00 - 18:00'
     ]
 
-    // Lista de médicos simulada
-    medicos = [
-        { nome: 'Dr. João Silva', especialidade: 'Cardiologia', horarios: ['07:00 - 08:00', '09:00 - 10:00', '14:00 - 15:00'] },
-        { nome: 'Dra. Mariana Santos', especialidade: 'Cardiologia', horarios: ['08:00 - 09:00', '10:00 - 11:00', '15:00 - 16:00'] },
-
-        { nome: 'Dr. Ana Souza', especialidade: 'Dermatologia', horarios: ['09:00 - 10:00', '11:00 - 12:00', '16:00 - 17:00'] },
-        { nome: 'Dra. Letícia Almeida', especialidade: 'Dermatologia', horarios: ['07:00 - 08:00', '10:00 - 11:00', '13:00 - 14:00'] },
-
-        { nome: 'Dr. Carlos Mendes', especialidade: 'Ortopedia', horarios: ['08:00 - 09:00', '12:00 - 13:00', '17:00 - 18:00'] },
-        { nome: 'Dra. Beatriz Castro', especialidade: 'Ortopedia', horarios: ['09:00 - 10:00', '14:00 - 15:00', '16:00 - 17:00'] },
-
-        { nome: 'Dr. Fernando Lopes', especialidade: 'Neurologia', horarios: ['07:00 - 08:00', '09:00 - 10:00', '15:00 - 16:00'] },
-        { nome: 'Dra. Carla Ferreira', especialidade: 'Neurologia', horarios: ['08:00 - 09:00', '12:00 - 13:00', '14:00 - 15:00'] },
-
-        { nome: 'Dr. Henrique Oliveira', especialidade: 'Gastroenterologia', horarios: ['07:00 - 08:00', '10:00 - 11:00', '13:00 - 14:00'] },
-        { nome: 'Dra. Silvia Ramos', especialidade: 'Gastroenterologia', horarios: ['09:00 - 10:00', '12:00 - 13:00', '15:00 - 16:00'] },
-
-        { nome: 'Dr. Rafael Lima', especialidade: 'Geriatria', horarios: ['08:00 - 09:00', '11:00 - 12:00', '14:00 - 15:00'] },
-        { nome: 'Dra. Márcia Andrade', especialidade: 'Geriatria', horarios: ['07:00 - 08:00', '10:00 - 11:00', '13:00 - 14:00'] },
-
-        { nome: 'Dr. Daniel Costa', especialidade: 'Hematologia', horarios: ['07:00 - 08:00', '09:00 - 10:00', '16:00 - 17:00'] },
-        { nome: 'Dra. Renata Souza', especialidade: 'Hematologia', horarios: ['08:00 - 09:00', '11:00 - 12:00', '17:00 - 18:00'] },
-
-        { nome: 'Dr. Lucas Nogueira', especialidade: 'Infectologia', horarios: ['08:00 - 09:00', '10:00 - 11:00', '14:00 - 15:00'] },
-        { nome: 'Dra. Fernanda Barros', especialidade: 'Infectologia', horarios: ['09:00 - 10:00', '12:00 - 13:00', '16:00 - 17:00'] },
-
-        { nome: 'Dr. Eduardo Martins', especialidade: 'Nefrologia', horarios: ['07:00 - 08:00', '10:00 - 11:00', '15:00 - 16:00'] },
-        { nome: 'Dra. Amanda Silva', especialidade: 'Nefrologia', horarios: ['09:00 - 10:00', '12:00 - 13:00', '17:00 - 18:00'] },
-
-        { nome: 'Dr. Guilherme Rocha', especialidade: 'Oncologia', horarios: ['08:00 - 09:00', '11:00 - 12:00', '16:00 - 17:00'] },
-        { nome: 'Dra. Juliana Ribeiro', especialidade: 'Oncologia', horarios: ['07:00 - 08:00', '10:00 - 11:00', '13:00 - 14:00'] },
-
-        { nome: 'Dr. Tiago Mendes', especialidade: 'Pneumologia', horarios: ['09:00 - 10:00', '12:00 - 13:00', '15:00 - 16:00'] },
-        { nome: 'Dra. Patrícia Lima', especialidade: 'Pneumologia', horarios: ['08:00 - 09:00', '11:00 - 12:00', '17:00 - 18:00'] },
-
-        { nome: 'Dr. André Carvalho', especialidade: 'Reumatologia', horarios: ['07:00 - 08:00', '10:00 - 11:00', '16:00 - 17:00'] },
-        { nome: 'Dra. Larissa Duarte', especialidade: 'Reumatologia', horarios: ['09:00 - 10:00', '12:00 - 13:00', '15:00 - 16:00'] },
-
-        { nome: 'Dr. Roberto Oliveira', especialidade: 'Pediatria', horarios: ['08:00 - 09:00', '11:00 - 12:00', '14:00 - 15:00'] },
-        { nome: 'Dra. Tatiane Costa', especialidade: 'Pediatria', horarios: ['07:00 - 08:00', '10:00 - 11:00', '13:00 - 14:00'] },
-
-        { nome: 'Dr. Miguel Santos', especialidade: 'Alergologia', horarios: ['09:00 - 10:00', '12:00 - 13:00', '16:00 - 17:00'] },
-        { nome: 'Dra. Rafaela Monteiro', especialidade: 'Alergologia', horarios: ['08:00 - 09:00', '11:00 - 12:00', '14:00 - 15:00'] }
-    ]
-
-    // Variáveis de estado
-    especialidadeSelecionada = ''
-    medicoSelecionado: any = null
-    horarioSelecionado = ''
-    medicosDisponiveis: any[] = []
+    //carregar medicos do banco de dados
+    async carregarMedicos() {
+        try {
+            const response = await axios.get('http://localhost/Projetos/tcc_unit/backend/api/listar_medicos.php')
+            if (response.data.success) {
+                // Converte horários de string para array, se necessário
+                this.medicos = response.data.medicos.map((med: any) => {
+                    if (typeof med.horarios === 'string') {
+                        try {
+                            med.horarios = JSON.parse(med.horarios)
+                        } catch {
+                            med.horarios = []
+                        }
+                    }
+                    return med
+                })
+            } else {
+                console.warn(response.data.message)
+            }
+        } catch (err) {
+            console.error('Erro ao carregar médicos:', err)
+        }
+    }
 
     // Filtra os médicos disponíveis conforme a especialidade escolhida
     filtrarMedicos() {
