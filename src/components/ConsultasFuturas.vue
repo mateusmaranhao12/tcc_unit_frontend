@@ -1,12 +1,19 @@
 <template>
     <div class="mt-6 p-4 bg-white shadow-md rounded-lg relative">
+        <!-- Alerta aparece quando há uma mensagem -->
+        <div v-if="mensagem_alerta" :class="estiloAlerta"
+            class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+            <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
+            <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
+        </div>
+
         <!-- Botão para fechar a rota filha -->
         <button @click="$router.push('/menu-medico')"
             class="absolute top-4 right-4 text-red-500 text-xl cursor-pointer">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Consultas Futuras</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Próximas consultas</h2>
 
         <div v-if="consultas.length" class="space-y-4">
             <div v-for="consulta in consultas" :key="consulta.id"
@@ -40,6 +47,9 @@ import axios from 'axios'
 export default class ConsultasFuturas extends Vue {
     consultas: any[] = []
 
+    // Alerta
+    mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
+
     async mounted() {
         const emailMedico = localStorage.getItem('medicoEmail')
         if (!emailMedico) return
@@ -50,18 +60,22 @@ export default class ConsultasFuturas extends Vue {
             })
 
             if (response.data.success) {
-                const hojeStr = new Date().toISOString().split('T')[0]
+                // Corrigir o fuso horário local para "hoje"
+                const agora = new Date()
+                const offsetMs = agora.getTimezoneOffset() * 60000
+                const hojeLocal = new Date(agora.getTime() - offsetMs)
+                const hojeStr = hojeLocal.toISOString().split('T')[0]
 
                 this.consultas = response.data.consultas.map((c: any) => {
                     const dataOriginal = c.data_consulta
                     const horarioOriginal = c.horario_consulta
                     const horarioFormatado = horarioOriginal.replace(' - ', ' às ')
 
-                    const [ano, mes, dia] = dataOriginal.split('-')
+                    const [anoC, mesC, diaC] = dataOriginal.split('-')
 
                     const dataFormatada = dataOriginal === hojeStr
                         ? `Hoje das ${horarioFormatado}`
-                        : `${dia}/${mes}/${ano} das ${horarioFormatado}`
+                        : `${diaC}/${mesC}/${anoC} das ${horarioFormatado}`
 
                     return {
                         id: c.id,
@@ -76,16 +90,49 @@ export default class ConsultasFuturas extends Vue {
         }
     }
 
+    //reagendar consulta
     reagendarConsulta(id: number) {
         console.log(`Reagendando consulta ${id}`)
     }
 
+    //desmarcar consulta
     desmarcarConsulta(id: number) {
         console.log(`Desmarcando consulta ${id}`)
     }
 
-    finalizarConsulta(id: number) {
-        console.log(`Finalizando consulta ${id}`)
+    //finalizar consulta
+    async finalizarConsulta(id: number) {
+        try {
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/finalizar_consulta.php', {
+                id: id
+            })
+
+            if (response.data.success) {
+                this.consultas = this.consultas.filter(c => c.id !== id)
+                this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta: ' + response.data.message, 'erro')
+            }
+        } catch (error) {
+            console.error('Erro ao finalizar consulta:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta.', 'erro')
+        }
     }
+
+    //mostrar mensagem alerta
+    private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
+        this.mensagem_alerta = { icone, mensagem, status }
+        setTimeout(() => {
+            this.mensagem_alerta = null
+        }, 5000)
+    }
+
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.mensagem_alerta?.status === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500'
+    }
+
 }
 </script>

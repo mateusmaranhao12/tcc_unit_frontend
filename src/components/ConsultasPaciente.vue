@@ -1,5 +1,13 @@
 <template>
     <div class="mt-6 p-4 bg-white shadow-md rounded-lg relative">
+
+        <!-- Alerta aparece quando há uma mensagem -->
+        <div v-if="mensagem_alerta" :class="estiloAlerta"
+            class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+            <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
+            <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
+        </div>
+
         <!-- Botão para fechar a rota filha -->
         <button @click="$router.push('/menu-paciente')"
             class="absolute top-4 right-4 text-red-500 text-xl cursor-pointer">
@@ -42,6 +50,9 @@ import axios from 'axios'
 export default class ConsultasPaciente extends Vue {
     consultas: any[] = []
 
+    // Alerta
+    mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
+
     async mounted() {
         const emailPaciente = localStorage.getItem('pacienteEmail')
         if (!emailPaciente) return
@@ -52,7 +63,12 @@ export default class ConsultasPaciente extends Vue {
             })
 
             if (response.data.success) {
-                const hojeStr = new Date().toISOString().split('T')[0]
+                const hoje = new Date()
+                const ano = hoje.getFullYear()
+                const mes = String(hoje.getMonth() + 1).padStart(2, '0')
+                const dia = String(hoje.getDate()).padStart(2, '0')
+                const hojeStr = `${ano}-${mes}-${dia}`
+
 
                 this.consultas = response.data.consultas.map((c: any) => {
 
@@ -72,6 +88,7 @@ export default class ConsultasPaciente extends Vue {
         }
     }
 
+    //formatar data
     formatarData(data: string, horario: string): string {
         if (data === 'Hoje') {
             return `Hoje das ${horario}`
@@ -81,16 +98,48 @@ export default class ConsultasPaciente extends Vue {
         return `${dia}/${mes}/${ano} das ${horario}`
     }
 
-    finalizarConsulta(id: number) {
-        console.log(`Finalizando consulta ${id}`)
+    //finalizar consulta
+    async finalizarConsulta(id: number) {
+        try {
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/finalizar_consulta.php', {
+                id: id
+            })
+
+            if (response.data.success) {
+                this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
+                this.consultas = this.consultas.filter(c => c.id !== id)
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta: ' + response.data.message, 'erro')
+            }
+        } catch (error) {
+            console.error('Erro ao finalizar consulta:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta.', 'erro')
+        }
     }
 
+    //reagendar consulta
     reagendarConsulta(id: number) {
         console.log(`Reagendando consulta ${id}`)
     }
 
+    //desmarcar consulta
     desmarcarConsulta(id: number) {
         console.log(`Cancelando consulta ${id}`)
+    }
+
+    //mostrar mensagem alerta
+    private mostrarMensagemAlerta(icone: string, mensagem: string, status: 'sucesso' | 'erro') {
+        this.mensagem_alerta = { icone, mensagem, status }
+        setTimeout(() => {
+            this.mensagem_alerta = null
+        }, 5000)
+    }
+
+    // Computed para retornar o estilo do alerta com base no tipo
+    get estiloAlerta(): string {
+        return this.mensagem_alerta?.status === 'sucesso'
+            ? 'bg-green-100 text-green-800 border border-green-500'
+            : 'bg-red-100 text-red-800 border border-red-500'
     }
 }
 </script>

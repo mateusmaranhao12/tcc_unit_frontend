@@ -160,15 +160,23 @@ export default class AgendarConsulta extends Vue {
     async agendarConsulta() {
         const emailPaciente = localStorage.getItem('pacienteEmail')
 
-        const hoje = new Date()
-        const dataSelecionada = new Date(this.dataSelecionada + 'T' + this.horarioSelecionado.split(' - ')[0] + ':00')
-
+        // Verifica se os campos estão preenchidos
         if (!emailPaciente || !this.dataSelecionada || !this.horarioSelecionado || !this.medicoSelecionado) {
-            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Por favor, preencha todos os campos para agendar a consulta.', 'erro')
+            this.mostrarMensagemAlerta(
+                'fa-solid fa-circle-xmark',
+                'Por favor, preencha todos os campos para agendar a consulta.',
+                'erro'
+            )
             return
         }
 
-        if (isNaN(dataSelecionada.getTime()) || dataSelecionada.getTime() <= hoje.getTime()) {
+        // Constrói objeto Date com base na data e horário selecionados
+        const [horaInicio] = this.horarioSelecionado.split(' - ')
+        const dataHoraSelecionada = new Date(`${this.dataSelecionada}T${horaInicio}:00`)
+        const agora = new Date()
+
+        // Valida se a data/hora está no futuro
+        if (isNaN(dataHoraSelecionada.getTime()) || dataHoraSelecionada <= agora) {
             this.mostrarMensagemAlerta(
                 'fa-solid fa-circle-xmark',
                 'Selecione uma data e horário válidos a partir do momento atual.',
@@ -178,14 +186,12 @@ export default class AgendarConsulta extends Vue {
         }
 
         try {
-
-            const response = // No método de agendamento
-                await axios.post('http://localhost/Projetos/tcc_unit/backend/api/agendar_consulta.php', {
-                    email_paciente: emailPaciente,
-                    email_medico: this.medicoSelecionado.email,
-                    data_consulta: this.dataSelecionada,
-                    horario_consulta: this.horarioSelecionado
-                })
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/agendar_consulta.php', {
+                email_paciente: emailPaciente,
+                email_medico: this.medicoSelecionado.email,
+                data_consulta: this.dataSelecionada,
+                horario_consulta: this.horarioSelecionado
+            })
 
             if (response.data.success) {
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta agendada com sucesso!', 'sucesso')
@@ -215,7 +221,8 @@ export default class AgendarConsulta extends Vue {
     //data minima
     get minDate() {
         const today = new Date()
-        return today.toISOString().split('T')[0]
+        const localDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()) // zera hora
+        return localDate.toISOString().split('T')[0]
     }
 
     //mostrar mensagem alerta
