@@ -2,7 +2,7 @@
     <div class="mt-6 p-4 bg-white shadow-md rounded-lg relative">
         <!-- Alerta aparece quando há uma mensagem -->
         <div v-if="mensagem_alerta" :class="estiloAlerta"
-            class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-4">
+            class="flex items-center justify-center p-4 rounded-lg shadow-md mb-4 mt-8">
             <i :class="mensagem_alerta.icone" class="text-xl mr-2"></i>
             <span class="text-sm font-semibold">{{ mensagem_alerta.mensagem }}</span>
         </div>
@@ -39,6 +39,10 @@
                     <button v-if="consulta.status == 'agendada'" @click="desmarcarConsulta(consulta.id)"
                         class="btn-desmarcar w-full md:w-auto">
                         <i class="fa-solid fa-xmark"></i> Desmarcar
+                    </button>
+                    <button v-if="consulta.status !== 'agendada'" @click="removerConsulta(consulta.id)"
+                        class="btn-remover w-full md:w-auto">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -156,6 +160,24 @@ export default class ConsultasFuturas extends Vue {
         } catch (error) {
             console.error('Erro ao finalizar consulta:', error)
             this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta.', 'erro')
+        }
+    }
+
+    async removerConsulta(id: number) {
+        try {
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/remover_consulta.php', {
+                id: id
+            })
+
+            if (response.data.success) {
+                this.consultas = this.consultas.filter(c => c.id !== id)
+                this.mostrarMensagemAlerta('fa-solid fa-trash', 'Consulta removida com sucesso!', 'sucesso')
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao remover consulta: ' + response.data.message, 'erro')
+            }
+        } catch (error) {
+            console.error('Erro ao remover consulta:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao remover consulta.', 'erro')
         }
     }
 
