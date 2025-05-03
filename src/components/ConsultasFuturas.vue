@@ -96,8 +96,22 @@ export default class ConsultasFuturas extends Vue {
     }
 
     //desmarcar consulta
-    desmarcarConsulta(id: number) {
-        console.log(`Desmarcando consulta ${id}`)
+    async desmarcarConsulta(id: number) {
+        try {
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/desmarcar_consulta.php', {
+                id: id
+            })
+
+            if (response.data.success) {
+                this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta desmarcada com sucesso!', 'sucesso')
+                this.consultas = this.consultas.filter(c => c.id !== id)
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao desmarcar consulta: ' + response.data.message, 'erro')
+            }
+        } catch (error) {
+            console.error('Erro ao desmarcar consulta:', error)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao desmarcar consulta.', 'erro')
+        }
     }
 
     //finalizar consulta
@@ -108,8 +122,8 @@ export default class ConsultasFuturas extends Vue {
             })
 
             if (response.data.success) {
-                this.consultas = this.consultas.filter(c => c.id !== id)
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
+                this.consultas = this.consultas.filter(c => c.id !== id)
             } else {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta: ' + response.data.message, 'erro')
             }
