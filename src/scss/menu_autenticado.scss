@@ -71,6 +71,20 @@
     }
 }
 
+.btn-remover {
+    background-color: rgb(126, 0, 0);
+    color: $white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: rgb(56, 0, 0);
+    }
+}
+
 .btn-finalizar {
     background-color: rgb(34, 206, 0);
     color: $white;

@@ -15,24 +15,35 @@
         </button>
 
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Minhas Consultas</h2>
+        <FiltrarConsultas @filtro-alterado="aplicarFiltro" />
 
         <div v-if="consultas.length" class="space-y-4">
-            <div v-for="consulta in consultas" :key="consulta.id"
+            <div v-for="consulta in consultasFiltradas" :key="consulta.id"
                 class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div class="mb-2 md:mb-0 w-full md:w-auto">
                     <p class="text-lg font-semibold">{{ formatarData(consulta.data, consulta.horario) }}</p>
                     <p class="text-gray-600">Médico: {{ consulta.medico }}</p>
+                    <p class="capitalize font-semibold" :class="{
+                        'text-blue-600': consulta.status === 'agendada',
+                        'text-red-600': consulta.status === 'cancelada',
+                        'text-green-600': consulta.status === 'realizada',
+                    }">{{ consulta.status }}</p>
                 </div>
                 <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-                    <button v-if="consulta.data.includes('Hoje')" @click="finalizarConsulta(consulta.id)"
-                        class="btn-finalizar w-full md:w-auto">
+                    <button v-if="consulta.data.includes('Hoje') && consulta.status !== 'cancelada'"
+                        @click="finalizarConsulta(consulta.id)" class="btn-finalizar w-full md:w-auto">
                         <i class="fa-solid fa-check"></i> Finalizar
                     </button>
                     <button @click="reagendarConsulta(consulta.id)" class="btn-reagendar w-full md:w-auto">
                         <i class="fa-solid fa-calendar-days"></i> Reagendar
                     </button>
-                    <button @click="desmarcarConsulta(consulta.id)" class="btn-desmarcar w-full md:w-auto">
+                    <button v-if="consulta.status == 'agendada'" @click="desmarcarConsulta(consulta.id)"
+                        class="btn-desmarcar w-full md:w-auto">
                         <i class="fa-solid fa-xmark"></i> Desmarcar
+                    </button>
+                    <button v-if="consulta.status !== 'agendada'" @click="removerConsulta()"
+                        class="btn-remover w-full md:w-auto">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -45,10 +56,18 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
 import axios from 'axios'
+import FiltrarConsultas from './FiltrarConsultas.vue'
 
-@Options({})
+@Options({
+    components: {
+        FiltrarConsultas
+    }
+})
+
 export default class ConsultasPaciente extends Vue {
     consultas: any[] = []
+
+    filtro = 'todos'
 
     // Alerta
     mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
@@ -79,7 +98,8 @@ export default class ConsultasPaciente extends Vue {
                         ...c,
                         data: dataOriginal === hojeStr ? 'Hoje' : dataOriginal,
                         horario: horarioFormatado,
-                        medico: `${c.nome_medico} ${c.sobrenome_medico}`
+                        medico: `${c.nome_medico} ${c.sobrenome_medico}`,
+                        status: c.status
                     }
                 })
             }
@@ -106,8 +126,11 @@ export default class ConsultasPaciente extends Vue {
             })
 
             if (response.data.success) {
+                const consulta = this.consultas.find(c => c.id === id)
+                if (consulta) {
+                    consulta.status = 'finalizada'
+                }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
-                this.consultas = this.consultas.filter(c => c.id !== id)
             } else {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta: ' + response.data.message, 'erro')
             }
@@ -130,8 +153,11 @@ export default class ConsultasPaciente extends Vue {
             })
 
             if (response.data.success) {
+                const consulta = this.consultas.find(c => c.id === id)
+                if (consulta) {
+                    consulta.status = 'cancelada'
+                }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta desmarcada com sucesso!', 'sucesso')
-                this.consultas = this.consultas.filter(c => c.id !== id)
             } else {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao desmarcar consulta: ' + response.data.message, 'erro')
             }
@@ -139,6 +165,22 @@ export default class ConsultasPaciente extends Vue {
             console.error('Erro ao desmarcar consulta:', error)
             this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao desmarcar consulta.', 'erro')
         }
+    }
+
+    //remover consulta
+    removerConsulta() {
+        console.log('remover consulta')
+    }
+
+    //consultas filtradas
+    get consultasFiltradas() {
+        if (this.filtro === 'todos') return this.consultas
+        return this.consultas.filter(c => c.status === this.filtro)
+    }
+
+    //aplicar filtro
+    aplicarFiltro(status: string) {
+        this.filtro = status
     }
 
     //mostrar mensagem alerta
