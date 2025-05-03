@@ -14,7 +14,14 @@
         </button>
 
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Próximas consultas</h2>
+
+        <!--Filtrar consultas-->
         <FiltrarConsultas @filtro-alterado="aplicarFiltro" />
+
+        <!--Modal Reagendar Consultas-->
+        <ModalReagendarConsulta v-if="modalReagendarVisivel && consultaSelecionada"
+            :idMedico="consultaSelecionada.id_medico" @confirmar="confirmarReagendamento"
+            @cancelar="modalReagendarVisivel = false" />
 
         <div v-if="consultas.length" class="space-y-4">
             <div v-for="consulta in consultasFiltradas" :key="consulta.id"
@@ -29,11 +36,12 @@
                     }">{{ consulta.status }}</p>
                 </div>
                 <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-                    <button v-if="consulta.data.includes('Hoje') && consulta.status !== 'cancelada'"
+                    <button v-if="consulta.data.includes('Hoje') && consulta.status === 'agendada'"
                         @click="finalizarConsulta(consulta.id)" class="btn-finalizar w-full md:w-auto">
                         <i class="fa-solid fa-check"></i> Finalizar
                     </button>
-                    <button @click="reagendarConsulta(consulta.id)" class="btn-reagendar w-full md:w-auto">
+                    <button v-if="consulta.status !== 'realizada'" @click="reagendarConsulta(consulta)"
+                        class="btn-reagendar w-full md:w-auto">
                         <i class="fa-solid fa-calendar-days"></i> Reagendar
                     </button>
                     <button v-if="consulta.status == 'agendada'" @click="desmarcarConsulta(consulta.id)"
@@ -56,19 +64,35 @@
 import { Options, Vue } from 'vue-class-component'
 import axios from 'axios'
 import FiltrarConsultas from './FiltrarConsultas.vue'
+import ModalReagendarConsulta from './ModalReagendarConsulta.vue'
+
+type Consulta = {
+    id: number
+    data: string
+    horario: string
+    paciente: string
+    status: string
+    id_medico: number
+}
 
 @Options({
 
     components: {
-        FiltrarConsultas
+        FiltrarConsultas,
+        ModalReagendarConsulta
     }
 
 })
 
 export default class ConsultasFuturas extends Vue {
-    consultas: any[] = []
+
+    consultas: Consulta[] = []
+    consultaSelecionada: Consulta | null = null
 
     filtro = 'todos'
+
+    // Modal
+    modalReagendarVisivel = false
 
     // Alerta
     mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
@@ -83,6 +107,7 @@ export default class ConsultasFuturas extends Vue {
             })
 
             if (response.data.success) {
+                console.log('Resposta da API - Consultas Futuras:', response.data.consultas)
                 // Corrigir o fuso horário local para "hoje"
                 const agora = new Date()
                 const offsetMs = agora.getTimezoneOffset() * 60000
@@ -102,6 +127,7 @@ export default class ConsultasFuturas extends Vue {
 
                     return {
                         id: c.id,
+                        id_medico: c.id_medico,
                         data: dataFormatada,
                         horario: horarioFormatado,
                         paciente: `${c.nome_paciente} ${c.sobrenome_paciente}`,
@@ -115,8 +141,43 @@ export default class ConsultasFuturas extends Vue {
     }
 
     //reagendar consulta
-    reagendarConsulta(id: number) {
-        console.log(`Reagendando consulta ${id}`)
+    reagendarConsulta(consulta: any) {
+        this.consultaSelecionada = consulta
+        this.modalReagendarVisivel = true
+    }
+
+    //confirmar reagendamento
+    async confirmarReagendamento(payload: { data: string, horario: string }) {
+        if (!this.consultaSelecionada?.id) return
+
+        try {
+            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/reagendar_consulta.php', {
+                id: this.consultaSelecionada.id,
+                data_consulta: payload.data,
+                horario_consulta: payload.horario
+            })
+
+            if (response.data.success) {
+                const consulta = this.consultas.find(c => c.id === this.consultaSelecionada?.id)
+                if (consulta) {
+                    const [ano, mes, dia] = payload.data.split('-')
+                    const dataFormatada = `${dia}/${mes}/${ano} das ${payload.horario.replace(' - ', ' às ')}`
+                    consulta.data = dataFormatada
+                    consulta.horario = payload.horario.replace(' - ', ' às ')
+                    consulta.status = 'agendada'
+                }
+
+                this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta reagendada com sucesso!', 'sucesso')
+            } else {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao reagendar: ' + response.data.message, 'erro')
+            }
+        } catch (error: any) {
+            console.error('Erro ao reagendar consulta:', error.response?.data || error.message)
+            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao reagendar consulta.', 'erro')
+        } finally {
+            this.modalReagendarVisivel = false
+            this.consultaSelecionada = null
+        }
     }
 
     //desmarcar consulta
@@ -151,7 +212,7 @@ export default class ConsultasFuturas extends Vue {
             if (response.data.success) {
                 const consulta = this.consultas.find(c => c.id === id)
                 if (consulta) {
-                    consulta.status = 'finalizada'
+                    consulta.status = 'realizada'
                 }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
             } else {
