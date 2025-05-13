@@ -7,6 +7,9 @@
             <option value="agendada">Agendadas</option>
             <option value="realizada">Realizadas</option>
             <option value="cancelada">Canceladas</option>
+            <option value="online">Online (Telemedicina)</option>
+            <option value="presencial">Presenciais</option>
+
         </select>
     </div>
 </template>

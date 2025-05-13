@@ -52,6 +52,15 @@
             </select>
         </div>
 
+        <!-- Escolha da modalidade -->
+         <div v-if="horarioSelecionado" class="mb-4">
+             <label class="block text-gray-700 font-semibold mb-2 mt-4">Modalidade da consulta:</label>
+             <select v-model="modalidadeSelecionada" class="input-field">
+                 <option value="" disabled>Selecione a modalidade</option>
+                 <option value="presencial">Presencial</option>
+                 <option value="online">Online (Telemedicina)</option>
+             </select>
+         </div>
 
         <!-- Botão de Agendar -->
         <button v-if="horarioSelecionado" class="btn-agendar" @click="agendarConsulta">
@@ -100,6 +109,8 @@ export default class AgendarConsulta extends Vue {
 
     medicosDisponiveis: any[] = []
     medicos: any[] = []
+
+    modalidadeSelecionada = ''
 
     //especialidades
     especialidades = [
@@ -161,7 +172,7 @@ export default class AgendarConsulta extends Vue {
         const emailPaciente = localStorage.getItem('pacienteEmail')
 
         // Verifica se os campos estão preenchidos
-        if (!emailPaciente || !this.dataSelecionada || !this.horarioSelecionado || !this.medicoSelecionado) {
+        if (!emailPaciente || !this.dataSelecionada || !this.horarioSelecionado || !this.medicoSelecionado || !this.modalidadeSelecionada) {
             this.mostrarMensagemAlerta(
                 'fa-solid fa-circle-xmark',
                 'Por favor, preencha todos os campos para agendar a consulta.',
@@ -190,7 +201,8 @@ export default class AgendarConsulta extends Vue {
                 email_paciente: emailPaciente,
                 email_medico: this.medicoSelecionado.email,
                 data_consulta: this.dataSelecionada,
-                horario_consulta: this.horarioSelecionado
+                horario_consulta: this.horarioSelecionado,
+                modalidade_consulta: this.modalidadeSelecionada
             })
 
             if (response.data.success) {
@@ -211,6 +223,7 @@ export default class AgendarConsulta extends Vue {
         this.medicoSelecionadoEmail = ''
         this.dataSelecionada = ''
         this.horarioSelecionado = ''
+        this.modalidadeSelecionada = ''
     }
 
     //voltar ao menu inicial

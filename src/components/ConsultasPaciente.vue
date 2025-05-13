@@ -34,6 +34,10 @@
                         'text-red-600': consulta.status === 'cancelada',
                         'text-green-600': consulta.status === 'realizada',
                     }">{{ consulta.status }}</p>
+                    <p class="capitalize font-semibold" :class="{
+                        'text-cyan-600': consulta.modalidade === 'presencial',
+                        'text-emerald-600': consulta.modalidade === 'online',
+                    }">{{ consulta.modalidade }}</p>
                 </div>
                 <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
                     <button v-if="consulta.data.includes('Hoje') && consulta.status === 'agendada'"
@@ -75,6 +79,7 @@ type Consulta = {
     medico: string
     status: string
     id_medico: number
+    modalidade: string
 }
 
 @Options({
@@ -89,7 +94,7 @@ export default class ConsultasPaciente extends Vue {
     consultas: Consulta[] = []
     consultaSelecionada: Consulta | null = null
 
-    filtro = 'todos'
+    filtro: 'todos' | 'agendada' | 'realizada' | 'cancelada' | 'online' | 'presencial' = 'todos'
 
     // Alerta
     mensagem_alerta: { icone: string, mensagem: string, status: 'sucesso' | 'erro' } | null = null
@@ -124,7 +129,8 @@ export default class ConsultasPaciente extends Vue {
                         data: dataOriginal === hojeStr ? 'Hoje' : dataOriginal,
                         horario: horarioFormatado,
                         medico: `${c.nome_medico} ${c.sobrenome_medico}`,
-                        status: c.status
+                        status: c.status,
+                        modalidade: c.modalidade
                     }
                 })
             }
@@ -247,12 +253,20 @@ export default class ConsultasPaciente extends Vue {
     //consultas filtradas
     get consultasFiltradas() {
         if (this.filtro === 'todos') return this.consultas
-        return this.consultas.filter(c => c.status === this.filtro)
+
+        // Verifica se o filtro é um status conhecido
+        const statusFiltros = ['agendada', 'realizada', 'cancelada']
+        if (statusFiltros.includes(this.filtro)) {
+            return this.consultas.filter(c => c.status === this.filtro)
+        }
+
+        // Caso contrário, assume que o filtro é modalidade
+        return this.consultas.filter(c => c.modalidade === this.filtro)
     }
 
     //aplicar filtro
     aplicarFiltro(status: string) {
-        this.filtro = status
+        this.filtro = status as 'todos' | 'agendada' | 'realizada' | 'cancelada' | 'online' | 'presencial'
     }
 
     //mostrar mensagem alerta
