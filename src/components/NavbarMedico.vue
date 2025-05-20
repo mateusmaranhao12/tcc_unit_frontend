@@ -1,16 +1,33 @@
 <template>
     <nav class="bg-white text-green-500 p-4 shadow-md">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center space-x-3">
+        <div class="container mx-auto flex flex-wrap justify-between items-center gap-4">
+
+            <!-- Nome, imagem e notificações juntos no mobile -->
+            <div class="flex items-center space-x-3 order-1 md:order-none">
                 <img :src="imagemPerfil" alt="Perfil"
-                    class="w-10 h-10 rounded-full border border-gray-300 object-cover" />
+                    class="w-10 h-10 rounded-full border border-gray-300" />
                 <h1 class="text-xl font-bold">{{ nomeCompleto }}</h1>
+
+                <!-- Ícone de notificação ao lado no mobile -->
+                <div class="md:hidden">
+                    <Notificacoes />
+                </div>
             </div>
 
-            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0">
-                <button @click="alterarInformacoes" class="btn-green-menu">Alterar
-                    dados do perfil</button>
-                <button @click="logout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+            <!-- Ações: notificação (desktop), editar, logout -->
+            <div class="flex items-center space-x-4 order-2 md:order-none">
+                <!-- Ícone de notificação à direita no desktop -->
+                <div class="hidden md:block">
+                    <Notificacoes />
+                </div>
+
+                <button @click="alterarInformacoes" class="btn-green-menu">
+                    Alterar dados do perfil
+                </button>
+
+                <button @click="logout" class="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -20,12 +37,15 @@
 import { Options, Vue } from 'vue-class-component'
 import { logout } from '@/router'
 import { Store } from 'vuex'
+import Notificacoes from './Notificacoes.vue'
 
 interface WithStore {
     $store: Store<any>
 }
 
-@Options({})
+@Options({
+    Notificacoes
+})
 export default class NavbarMedico extends Vue implements WithStore {
     $store!: Store<any> // adiciona tipagem da store
 
