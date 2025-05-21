@@ -225,11 +225,25 @@ export default class AgendarConsulta extends Vue {
             const sobrenomePaciente = this.$store.state.paciente.sobrenome
             const nomeCompletoPaciente = `${nomePaciente} ${sobrenomePaciente}`
 
-            const mensagem = `${nomeCompletoPaciente} marcou uma consulta com você.`
-            const urlDestino = '/menu-medico/consultas-futuras'
+            // Formatar data
+            const [ano, mes, dia] = this.dataSelecionada!.split('-')
+            const dataFormatada = `${dia}/${mes}/${ano} das ${this.horarioSelecionado.replace(' - ', ' às ')}`
+
+            const mensagem = `${nomeCompletoPaciente} marcou uma consulta com você para ${dataFormatada}.`
+            const urlDestino = '/menu-medico/consultas-medico'
+
+            // Buscar ID do medico via axios
+            const response = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/buscar_medico_por_email.php?email=${this.medicoSelecionado.email}`)
+            const idMedico = response.data?.id
+
+            if (!idMedico) {
+                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao buscar médico', 'erro')
+                return
+            }
 
             await axios.post('http://localhost/Projetos/tcc_unit/backend/api/inserir_notificacao.php', {
-                email_medico: this.medicoSelecionado.email,
+                destinatario: 'medico',
+                id_destinatario: idMedico,
                 mensagem,
                 url_destino: urlDestino
             }, {
@@ -239,7 +253,6 @@ export default class AgendarConsulta extends Vue {
             console.error('Erro ao enviar notificação para o médico:', error)
         }
     }
-
 
     //limpar formulario
     private limparFormulario() {

@@ -71,6 +71,7 @@ import { Options, Vue } from 'vue-class-component'
 import axios from 'axios'
 import FiltrarConsultas from './FiltrarConsultas.vue'
 import ModalReagendarConsulta from './ModalReagendarConsulta.vue'
+import { Store } from 'vuex'
 
 type Consulta = {
     id: number
@@ -91,6 +92,8 @@ type Consulta = {
 
 
 export default class ConsultasPaciente extends Vue {
+
+    $store!: Store<any>
     consultas: Consulta[] = []
     consultaSelecionada: Consulta | null = null
 
@@ -149,6 +152,22 @@ export default class ConsultasPaciente extends Vue {
         return `${dia}/${mes}/${ano} das ${horario}`
     }
 
+    //enviar notificacao para medico
+    async enviarNotificacaoParaMedico(idMedico: number, mensagem: string) {
+        try {
+            await axios.post('http://localhost/Projetos/tcc_unit/backend/api/inserir_notificacao.php', {
+                destinatario: 'medico',
+                id_destinatario: idMedico,
+                mensagem: mensagem,
+                url_destino: '/menu-medico/consultas-futuras'
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+        } catch (error) {
+            console.error('Erro ao enviar notificação para o médico:', error)
+        }
+    }
+
     //finalizar consulta
     async finalizarConsulta(id: number) {
         try {
@@ -160,6 +179,16 @@ export default class ConsultasPaciente extends Vue {
                 const consulta = this.consultas.find(c => c.id === id)
                 if (consulta) {
                     consulta.status = 'realizada'
+                    const dataFormatada = this.formatarData(consulta.data, consulta.horario.replace(' - ', ' às '))
+
+                    const nomePaciente = this.$store.state.paciente.nome
+                    const sobrenomePaciente = this.$store.state.paciente.sobrenome
+                    const nomeCompletoPaciente = `${nomePaciente} ${sobrenomePaciente}`
+
+                    await this.enviarNotificacaoParaMedico(
+                        consulta.id_medico,
+                        `O paciente ${nomeCompletoPaciente} finalizou a consulta realizada no dia ${dataFormatada}.`
+                    )
                 }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
             } else {
@@ -194,6 +223,17 @@ export default class ConsultasPaciente extends Vue {
                     consulta.data = payload.data
                     consulta.horario = payload.horario.replace(' - ', ' às ')
                     consulta.status = 'agendada'
+
+                    const dataFormatada = this.formatarData(payload.data, payload.horario.replace(' - ', ' às '))
+
+                    const nomePaciente = this.$store.state.paciente.nome
+                    const sobrenomePaciente = this.$store.state.paciente.sobrenome
+                    const nomeCompletoPaciente = `${nomePaciente} ${sobrenomePaciente}`
+
+                    await this.enviarNotificacaoParaMedico(
+                        consulta.id_medico,
+                        `O paciente ${nomeCompletoPaciente} reagendou a consulta para ${dataFormatada}.`
+                    )
                 }
 
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta reagendada com sucesso!', 'sucesso')
@@ -220,6 +260,17 @@ export default class ConsultasPaciente extends Vue {
                 const consulta = this.consultas.find(c => c.id === id)
                 if (consulta) {
                     consulta.status = 'cancelada'
+
+                    const dataFormatada = this.formatarData(consulta.data, consulta.horario.replace(' - ', ' às '))
+
+                    const nomePaciente = this.$store.state.paciente.nome
+                    const sobrenomePaciente = this.$store.state.paciente.sobrenome
+                    const nomeCompletoPaciente = `${nomePaciente} ${sobrenomePaciente}`
+
+                    await this.enviarNotificacaoParaMedico(
+                        consulta.id_medico,
+                        `O paciente ${nomeCompletoPaciente} desmarcou a consulta agendada para ${dataFormatada}.`
+                    )
                 }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta desmarcada com sucesso!', 'sucesso')
             } else {

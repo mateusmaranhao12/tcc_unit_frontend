@@ -69,6 +69,7 @@ import { Options, Vue } from 'vue-class-component'
 import axios from 'axios'
 import FiltrarConsultas from './FiltrarConsultas.vue'
 import ModalReagendarConsulta from './ModalReagendarConsulta.vue'
+import { Store } from 'vuex'
 
 type Consulta = {
     id: number
@@ -77,6 +78,7 @@ type Consulta = {
     paciente: string
     status: string
     id_medico: number
+    id_paciente: number
     modalidade: string
 }
 
@@ -89,8 +91,9 @@ type Consulta = {
 
 })
 
-export default class ConsultasFuturas extends Vue {
+export default class ConsultasMedico extends Vue {
 
+    $store!: Store<any>
     consultas: Consulta[] = []
     consultaSelecionada: Consulta | null = null
 
@@ -136,6 +139,7 @@ export default class ConsultasFuturas extends Vue {
                         data: dataFormatada,
                         horario: horarioFormatado,
                         paciente: `${c.nome_paciente} ${c.sobrenome_paciente}`,
+                        id_paciente: c.id_paciente,
                         status: c.status,
                         modalidade: c.modalidade
                     }
@@ -168,9 +172,19 @@ export default class ConsultasFuturas extends Vue {
                 if (consulta) {
                     const [ano, mes, dia] = payload.data.split('-')
                     const dataFormatada = `${dia}/${mes}/${ano} das ${payload.horario.replace(' - ', ' às ')}`
+
                     consulta.data = dataFormatada
                     consulta.horario = payload.horario.replace(' - ', ' às ')
                     consulta.status = 'agendada'
+
+                    const nomeMedico = this.$store.state.medico.nome
+                    const sobrenomeMedico = this.$store.state.medico.sobrenome
+                    const nomeCompletoMedico = `Dr(a). ${nomeMedico} ${sobrenomeMedico}`
+
+                    await this.enviarNotificacaoParaPaciente(
+                        consulta.id_paciente,
+                        `Sua consulta com ${nomeCompletoMedico} foi reagendada para ${dataFormatada}.`
+                    )
                 }
 
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta reagendada com sucesso!', 'sucesso')
@@ -197,6 +211,15 @@ export default class ConsultasFuturas extends Vue {
                 const consulta = this.consultas.find(c => c.id === id)
                 if (consulta) {
                     consulta.status = 'cancelada'
+
+                    const nomeMedico = this.$store.state.medico.nome
+                    const sobrenomeMedico = this.$store.state.medico.sobrenome
+                    const nomeCompletoMedico = `Dr(a). ${nomeMedico} ${sobrenomeMedico}`
+
+                    await this.enviarNotificacaoParaPaciente(
+                        consulta.id_paciente,
+                        `Sua consulta com ${nomeCompletoMedico} foi desmarcada.`
+                    )
                 }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta desmarcada com sucesso!', 'sucesso')
             } else {
@@ -207,6 +230,7 @@ export default class ConsultasFuturas extends Vue {
             this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao desmarcar consulta.', 'erro')
         }
     }
+
 
     //finalizar consulta
     async finalizarConsulta(id: number) {
@@ -219,6 +243,15 @@ export default class ConsultasFuturas extends Vue {
                 const consulta = this.consultas.find(c => c.id === id)
                 if (consulta) {
                     consulta.status = 'realizada'
+
+                    const nomeMedico = this.$store.state.medico.nome
+                    const sobrenomeMedico = this.$store.state.medico.sobrenome
+                    const nomeCompletoMedico = `Dr(a). ${nomeMedico} ${sobrenomeMedico}`
+
+                    await this.enviarNotificacaoParaPaciente(
+                        consulta.id_paciente,
+                        `Sua consulta com ${nomeCompletoMedico} foi finalizada.`
+                    )
                 }
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
             } else {
@@ -265,6 +298,30 @@ export default class ConsultasFuturas extends Vue {
     //aplicar filtro
     aplicarFiltro(status: string) {
         this.filtro = status as 'todos' | 'agendada' | 'realizada' | 'cancelada' | 'online' | 'presencial'
+    }
+
+    //enviar notificação para paciente
+    async enviarNotificacaoParaPaciente(idPaciente: number, mensagem: string) {
+        try {
+
+            console.log({
+                destinatario: 'paciente',
+                id_destinatario: idPaciente,
+                mensagem: mensagem,
+                url_destino: '/menu-paciente/minhas-consultas'
+            });
+
+            await axios.post('http://localhost/Projetos/tcc_unit/backend/api/inserir_notificacao.php', {
+                destinatario: 'paciente',
+                id_destinatario: idPaciente,
+                mensagem: mensagem,
+                url_destino: '/menu-paciente/consultas-paciente'
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+        } catch (error) {
+            console.error('Erro ao enviar notificação para o paciente:', error)
+        }
     }
 
     //mostrar mensagem alerta

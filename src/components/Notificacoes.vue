@@ -20,10 +20,11 @@
                     <li v-for="notif in notificacoes" :key="notif.id"
                         class="flex justify-between items-start gap-2 text-sm text-gray-600 border-b pb-2 last:border-none">
                         <span @click="redirecionar(notif.url_destino)"
-                            class="cursor-pointer hover:text-blue-700 flex-1">
+                            class="cursor-pointer hover:text-green-700 flex-1">
                             {{ notif.mensagem }}
                         </span>
-                        <button @click="excluirNotificacao(notif.id)" class="cursor-pointer text-red-500 hover:text-red-700">
+                        <button @click="excluirNotificacao(notif.id)"
+                            class="cursor-pointer text-red-500 hover:text-red-700">
                             &times;
                         </button>
                     </li>
@@ -63,6 +64,7 @@ export default class Notificacoes extends Vue implements WithStore {
         document.removeEventListener('click', this.handleClickOutside)
     }
 
+    //menu de notificacoes
     toggleMenu() {
         this.menuAberto = !this.menuAberto
     }
@@ -74,37 +76,62 @@ export default class Notificacoes extends Vue implements WithStore {
         }
     }
 
+    //carregar notificações
     async carregarNotificacoes() {
         try {
             const userRole = localStorage.getItem('userRole')
-            if (userRole !== 'medico') {
-                console.warn('Usuário não autorizado a ver notificações de médico')
+
+            if (userRole === 'medico') {
+                const emailMedico = localStorage.getItem('medicoEmail')
+                if (!emailMedico) {
+                    console.warn('Email do médico não encontrado no localStorage')
+                    return
+                }
+
+                // Buscar ID do médico via API
+                const responseId = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/buscar_medico_por_email.php?email=${emailMedico}`)
+                const idMedico = responseId.data?.id
+
+                if (!idMedico) {
+                    console.warn('ID do médico não encontrado na base de dados')
+                    return
+                }
+
+                // Buscar notificações destinadas ao médico
+                const response = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/notificacoes.php?destinatario=medico&id=${idMedico}`)
+                this.notificacoes = response.data
+
+            } else if (userRole === 'paciente') {
+                const emailPaciente = localStorage.getItem('pacienteEmail')
+                if (!emailPaciente) {
+                    console.warn('Email do paciente não encontrado no localStorage')
+                    return
+                }
+
+                // Buscar ID do paciente via API
+                const responseId = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/buscar_paciente_por_email.php?email=${emailPaciente}`)
+                const idPaciente = responseId.data?.id
+
+                if (!idPaciente) {
+                    console.warn('ID do paciente não encontrado na base de dados')
+                    return
+                }
+
+                // Buscar notificações destinadas ao paciente
+                const response = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/notificacoes.php?destinatario=paciente&id=${idPaciente}`)
+                this.notificacoes = response.data
+
+            } else {
+                console.warn('Usuário não autorizado a ver notificações')
                 return
             }
 
-            const emailMedico = localStorage.getItem('medicoEmail')
-            if (!emailMedico) {
-                console.warn('Email do médico não encontrado no localStorage')
-                return
-            }
-
-            // Buscar ID do médico via API
-            const responseId = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/buscar_medico_por_email.php?email=${emailMedico}`)
-            const idMedico = responseId.data?.id
-
-            if (!idMedico) {
-                console.warn('ID do médico não encontrado na base de dados')
-                return
-            }
-
-            // Buscar notificações do médico
-            const response = await axios.get(`http://localhost/Projetos/tcc_unit/backend/api/notificacoes.php?id_medico=${idMedico}`)
-            this.notificacoes = response.data
         } catch (error) {
             console.error("Erro ao carregar notificações", error)
         }
     }
 
+    //excluir notificacoes
     async excluirNotificacao(idNotificacao: number) {
         try {
             await axios.post('http://localhost/Projetos/tcc_unit/backend/api/excluir_notificacao.php',
@@ -117,6 +144,7 @@ export default class Notificacoes extends Vue implements WithStore {
         }
     }
 
+    //redirecionar
     redirecionar(url: string) {
         this.$router.push(url)
     }

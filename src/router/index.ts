@@ -3,7 +3,7 @@ import AgendarConsulta from '@/views/AgendarConsulta.vue'
 import AlterarDadosPerfilMedico from '@/views/AlterarDadosPerfilMedico.vue'
 import AlterarDadosPerfilPaciente from '@/views/AlterarDadosPerfilPaciente.vue'
 import Cadastro from '@/views/Cadastro.vue'
-import ConsultasFuturas from '@/components/ConsultasFuturas.vue'
+import ConsultasMedico from '@/components/ConsultasMedico.vue'
 import ConsultasPaciente from '@/components/ConsultasPaciente.vue'
 import Index from '../views/Index.vue'
 import Login from '../views/Login.vue'
@@ -77,9 +77,9 @@ const routes: Array<RouteRecordRaw> = [
     },
     children: [
       {
-        path: 'consultas-futuras',
-        name: 'consultas-futuras',
-        component: ConsultasFuturas
+        path: 'consultas-medico',
+        name: 'consultas-medico',
+        component: ConsultasMedico
       }
     ]
   },

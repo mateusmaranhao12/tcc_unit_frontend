@@ -11,12 +11,12 @@
         <div class="mt-4 space-y-4">
           <div class="bg-gray-200 p-4 rounded-lg flex justify-between items-center">
             <span>Próximas consultas</span>
-            <button class="btn-ver" @click="$router.push('/menu-medico/consultas-futuras')">Ver</button>
+            <button class="btn-ver" @click="$router.push('/menu-medico/consultas-medico')">Ver</button>
           </div>
         </div>
       </div>
 
-      <router-view v-if="$route.name === 'consultas-do-dia' || $route.name === 'consultas-futuras'"></router-view>
+      <router-view v-if="$route.name === 'consultas-do-dia' || $route.name === 'consultas-medico'"></router-view>
     </div>
   </div>
 </template>
