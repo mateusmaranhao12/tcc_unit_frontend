@@ -44,7 +44,10 @@ interface WithStore {
 }
 
 @Options({
-    Notificacoes
+
+    components: {
+        Notificacoes
+    }
 })
 export default class NavbarMedico extends Vue implements WithStore {
     $store!: Store<any> // adiciona tipagem da store

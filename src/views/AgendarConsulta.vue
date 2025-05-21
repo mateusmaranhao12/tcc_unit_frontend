@@ -53,14 +53,14 @@
         </div>
 
         <!-- Escolha da modalidade -->
-         <div v-if="horarioSelecionado" class="mb-4">
-             <label class="block text-gray-700 font-semibold mb-2 mt-4">Modalidade da consulta:</label>
-             <select v-model="modalidadeSelecionada" class="input-field">
-                 <option value="" disabled>Selecione a modalidade</option>
-                 <option value="presencial">Presencial</option>
-                 <option value="online">Online (Telemedicina)</option>
-             </select>
-         </div>
+        <div v-if="horarioSelecionado" class="mb-4">
+            <label class="block text-gray-700 font-semibold mb-2 mt-4">Modalidade da consulta:</label>
+            <select v-model="modalidadeSelecionada" class="input-field">
+                <option value="" disabled>Selecione a modalidade</option>
+                <option value="presencial">Presencial</option>
+                <option value="online">Online (Telemedicina)</option>
+            </select>
+        </div>
 
         <!-- Botão de Agendar -->
         <button v-if="horarioSelecionado" class="btn-agendar" @click="agendarConsulta">
@@ -207,6 +207,7 @@ export default class AgendarConsulta extends Vue {
 
             if (response.data.success) {
                 this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta agendada com sucesso!', 'sucesso')
+                await this.enviarNotificacaoParaMedico()
                 this.limparFormulario()
             } else {
                 this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro: ' + response.data.message, 'erro')
@@ -216,6 +217,29 @@ export default class AgendarConsulta extends Vue {
             this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao agendar consulta.', 'erro')
         }
     }
+
+    //enviar notificacao para medico
+    async enviarNotificacaoParaMedico() {
+        try {
+            const nomePaciente = this.$store.state.paciente.nome
+            const sobrenomePaciente = this.$store.state.paciente.sobrenome
+            const nomeCompletoPaciente = `${nomePaciente} ${sobrenomePaciente}`
+
+            const mensagem = `${nomeCompletoPaciente} marcou uma consulta com você.`
+            const urlDestino = '/menu-medico/consultas-futuras'
+
+            await axios.post('http://localhost/Projetos/tcc_unit/backend/api/inserir_notificacao.php', {
+                email_medico: this.medicoSelecionado.email,
+                mensagem,
+                url_destino: urlDestino
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+        } catch (error) {
+            console.error('Erro ao enviar notificação para o médico:', error)
+        }
+    }
+
 
     //limpar formulario
     private limparFormulario() {
