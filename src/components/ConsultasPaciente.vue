@@ -159,7 +159,7 @@ export default class ConsultasPaciente extends Vue {
                 destinatario: 'medico',
                 id_destinatario: idMedico,
                 mensagem: mensagem,
-                url_destino: '/menu-medico/consultas-futuras'
+                url_destino: '/menu-medico/consultas-medico'
             }, {
                 headers: { 'Content-Type': 'application/json' }
             })

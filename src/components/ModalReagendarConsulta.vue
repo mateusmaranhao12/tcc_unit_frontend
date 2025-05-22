@@ -64,14 +64,14 @@ export default defineComponent({
     watch: {
         data(novaData) {
             if (!novaData) return
-            console.log('Buscando horários para:', novaData, 'ID médico:', this.idMedico) // <- AQUI
+            console.log('Buscando horários para:', novaData, 'ID médico:', this.idMedico)
             axios.get('http://localhost/Projetos/tcc_unit/backend/api/horarios_disponiveis.php', {
                 params: {
                     data_consulta: novaData,
                     id_medico: this.idMedico
                 }
             }).then(res => {
-                console.log('Resposta da API:', res.data) // <- AQUI
+                console.log('Resposta da API:', res.data)
                 if (res.data.success) {
                     this.horariosDisponiveis = res.data.horarios
                     this.horario = ''
