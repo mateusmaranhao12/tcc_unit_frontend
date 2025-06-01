@@ -29,6 +29,9 @@
                 <div class="mb-2 md:mb-0 w-full md:w-auto">
                     <p class="text-lg font-semibold">{{ consulta.data }}</p>
                     <p class="text-gray-600">Paciente: {{ consulta.paciente }}</p>
+                    <p class="text-sm text-gray-600">E-mail: {{ consulta.email }}</p>
+                    <p class="text-sm text-gray-600">Telefone: {{ consulta.telefone }}</p>
+
                     <p class="capitalize font-semibold" :class="{
                         'text-blue-600': consulta.status === 'agendada',
                         'text-red-600': consulta.status === 'cancelada',
@@ -76,6 +79,8 @@ type Consulta = {
     data: string
     horario: string
     paciente: string
+    email: string
+    telefone: string
     status: string
     id_medico: number
     id_paciente: number
@@ -139,6 +144,8 @@ export default class ConsultasMedico extends Vue {
                         data: dataFormatada,
                         horario: horarioFormatado,
                         paciente: `${c.nome_paciente} ${c.sobrenome_paciente}`,
+                        email: c.email_paciente,
+                        telefone: c.telefone_paciente,
                         id_paciente: c.id_paciente,
                         status: c.status,
                         modalidade: c.modalidade
