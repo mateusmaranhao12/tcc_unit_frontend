@@ -100,8 +100,8 @@
                 <div class="bg-green-600 text-white px-4 py-2 rounded-l-md flex items-center shadow-md h-full">
                     <i class="fa-solid fa-id-card text-xl"></i>
                 </div>
-                <input type="text" v-mask="'#######'" v-model="medico.crm" placeholder="CRM"
-                    :class="{ 'border-red-500': campoVazio('crm') }"
+                <input type="text" v-model="medico.crm" placeholder="CRM (6 a 8 dígitos)"
+                    :class="{ 'border-red-500': campoVazio('crm') }" maxlength="10"
                     class="input-field input-half border border-gray-300 px-4 py-2 h-10 focus:ring-2 focus:ring-green-500 focus:outline-none w-full">
             </div>
         </div>
