@@ -42,10 +42,6 @@
                     }">{{ consulta.modalidade }}</p>
                 </div>
                 <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-                    <button v-if="consulta.data.includes('Hoje') && consulta.status === 'agendada'"
-                        @click="finalizarConsulta(consulta.id)" class="btn-finalizar w-full md:w-auto">
-                        <i class="fa-solid fa-check"></i> Finalizar
-                    </button>
                     <button v-if="consulta.status !== 'realizada'" @click="reagendarConsulta(consulta)"
                         class="btn-reagendar w-full md:w-auto">
                         <i class="fa-solid fa-calendar-days"></i> Reagendar
@@ -171,38 +167,6 @@ export default class ConsultasPaciente extends Vue {
             })
         } catch (error) {
             console.error('Erro ao enviar notificação para o médico:', error)
-        }
-    }
-
-    //finalizar consulta
-    async finalizarConsulta(id: number) {
-        try {
-            const response = await axios.post('http://localhost/Projetos/tcc_unit/backend/api/finalizar_consulta.php', {
-                id: id
-            })
-
-            if (response.data.success) {
-                const consulta = this.consultas.find(c => c.id === id)
-                if (consulta) {
-                    consulta.status = 'realizada'
-                    const dataFormatada = this.formatarData(consulta.data, consulta.horario.replace(' - ', ' às '))
-
-                    const nomePaciente = this.$store.state.paciente.nome
-                    const sobrenomePaciente = this.$store.state.paciente.sobrenome
-                    const nomeCompletoPaciente = `${nomePaciente} ${sobrenomePaciente}`
-
-                    await this.enviarNotificacaoParaMedico(
-                        consulta.id_medico,
-                        `O paciente ${nomeCompletoPaciente} finalizou a consulta realizada no dia ${dataFormatada}.`
-                    )
-                }
-                this.mostrarMensagemAlerta('fa-solid fa-check', 'Consulta finalizada com sucesso!', 'sucesso')
-            } else {
-                this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta: ' + response.data.message, 'erro')
-            }
-        } catch (error) {
-            console.error('Erro ao finalizar consulta:', error)
-            this.mostrarMensagemAlerta('fa-solid fa-circle-xmark', 'Erro ao finalizar consulta.', 'erro')
         }
     }
 
